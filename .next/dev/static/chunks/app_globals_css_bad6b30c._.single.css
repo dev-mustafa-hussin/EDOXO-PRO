@@ -963,6 +963,14 @@
     scroll-margin-block: calc(var(--spacing) * 1);
   }
 
+  .list-inside {
+    list-style-position: inside;
+  }
+
+  .list-disc {
+    list-style-type: disc;
+  }
+
   .auto-rows-min {
     grid-auto-rows: min-content;
   }
@@ -1900,6 +1908,10 @@
     color: var(--primary-foreground);
   }
 
+  .file\:mr-4::file-selector-button {
+    margin-right: calc(var(--spacing) * 4);
+  }
+
   .file\:inline-flex::file-selector-button {
     display: inline-flex;
   }
@@ -1908,13 +1920,29 @@
     height: calc(var(--spacing) * 7);
   }
 
+  .file\:rounded-md::file-selector-button {
+    border-radius: calc(var(--radius)  - 2px);
+  }
+
   .file\:border-0::file-selector-button {
     border-style: var(--tw-border-style);
     border-width: 0;
   }
 
+  .file\:bg-blue-50::file-selector-button {
+    background-color: var(--color-blue-50);
+  }
+
   .file\:bg-transparent::file-selector-button {
     background-color: #0000;
+  }
+
+  .file\:px-4::file-selector-button {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+
+  .file\:py-2::file-selector-button {
+    padding-block: calc(var(--spacing) * 2);
   }
 
   .file\:text-sm::file-selector-button {
@@ -1927,12 +1955,26 @@
     font-weight: var(--font-weight-medium);
   }
 
+  .file\:font-semibold::file-selector-button {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .file\:text-blue-700::file-selector-button {
+    color: var(--color-blue-700);
+  }
+
   .file\:text-foreground::file-selector-button {
     color: var(--foreground);
   }
 
   .placeholder\:text-muted-foreground::placeholder {
     color: var(--muted-foreground);
+  }
+
+  .last\:border-0:last-child {
+    border-style: var(--tw-border-style);
+    border-width: 0;
   }
 
   @media (hover: hover) {
@@ -2104,6 +2146,12 @@
     .hover\:shadow-md:hover {
       --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, #0000001a), 0 2px 4px -2px var(--tw-shadow-color, #0000001a);
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:file\:bg-blue-100:hover::file-selector-button {
+      background-color: var(--color-blue-100);
     }
   }
 

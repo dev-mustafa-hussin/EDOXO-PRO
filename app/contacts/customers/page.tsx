@@ -19,7 +19,7 @@ import {
   Eye,
 } from "lucide-react";
 
-interface Supplier {
+interface Customer {
   id: string;
   contactId: string;
   name: string;
@@ -32,8 +32,8 @@ interface Supplier {
   addedOn: string;
   address: string;
   mobile: string;
-  unpaidPurchases: string;
-  purchaseReturnsTotal: string;
+  unpaidInvoices: string;
+  salesReturnsTotal: string;
   customField1: string;
   customField2: string;
   customField3: string;
@@ -60,13 +60,13 @@ const columns = [
   { key: "address", label: "العنوان", sortable: true },
   { key: "mobile", label: "الموبايل", sortable: true },
   {
-    key: "unpaidPurchases",
-    label: "مجموع المشتريات غير المدفوعة",
+    key: "unpaidInvoices",
+    label: "مجموع الفواتير غير المدفوعة",
     sortable: true,
   },
   {
-    key: "purchaseReturnsTotal",
-    label: "اجمالى مستحق مرتجع المشتريات",
+    key: "salesReturnsTotal",
+    label: "اجمالى مستحق مرتجع المبيعات",
     sortable: true,
   },
   { key: "customField1", label: "حقل مخصص 1", sortable: true },
@@ -81,7 +81,7 @@ const columns = [
   { key: "customField10", label: "حقل مخصص 10", sortable: true },
 ];
 
-export default function SuppliersPage() {
+export default function CustomersPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -94,14 +94,14 @@ export default function SuppliersPage() {
 
   // Filter states
   const [filterPaymentDue, setFilterPaymentDue] = useState(false);
-  const [filterPurchaseReturns, setFilterPurchaseReturns] = useState(false);
+  const [filterSalesReturns, setFilterSalesReturns] = useState(false);
   const [filterPreviousBalance, setFilterPreviousBalance] = useState(false);
   const [filterOpeningBalance, setFilterOpeningBalance] = useState(false);
   const [filterStatus, setFilterStatus] = useState("لا احد");
   const [filterAssignedTo, setFilterAssignedTo] = useState("لا احد");
 
   // Sample data - empty for now
-  const suppliers: Supplier[] = [];
+  const customers: Customer[] = [];
 
   const toggleColumnVisibility = (key: string) => {
     setVisibleColumns((prev) => ({
@@ -118,7 +118,7 @@ export default function SuppliersPage() {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "suppliers.csv";
+    link.download = "customers.csv";
     link.click();
   };
 
@@ -127,7 +127,7 @@ export default function SuppliersPage() {
       .filter((col) => visibleColumns[col.key] && col.key !== "action")
       .map((col) => col.label);
     let tableHtml =
-      '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>الموردين</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table dir="rtl">';
+      '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>العملاء</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table dir="rtl">';
     tableHtml +=
       "<tr>" + headers.map((h) => `<th>${h}</th>`).join("") + "</tr>";
     tableHtml += "</table></body></html>";
@@ -136,7 +136,7 @@ export default function SuppliersPage() {
     });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "suppliers.xls";
+    link.download = "customers.xls";
     link.click();
   };
 
@@ -149,7 +149,7 @@ export default function SuppliersPage() {
       printWindow.document.write(`
         <html dir="rtl">
           <head>
-            <title>الموردين</title>
+            <title>العملاء</title>
             <style>
               body { font-family: 'Noto Sans Arabic', Arial, sans-serif; direction: rtl; padding: 20px; }
               h1 { text-align: center; color: #1e3a5f; }
@@ -163,7 +163,7 @@ export default function SuppliersPage() {
             <div class="print-date">تاريخ الطباعة: ${new Date().toLocaleDateString(
               "ar-EG"
             )}</div>
-            <h1>الموردين</h1>
+            <h1>العملاء</h1>
             <table>
               <thead><tr>${headers
                 .map((h) => `<th>${h}</th>`)
@@ -195,7 +195,7 @@ export default function SuppliersPage() {
           {/* Page Title */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">الموردين</h1>
+              <h1 className="text-2xl font-bold text-gray-800">العملاء</h1>
               <p className="text-sm text-gray-500">إدارة contacts: الخاص بك</p>
             </div>
           </div>
@@ -237,67 +237,21 @@ export default function SuppliersPage() {
                     />
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <span className="text-gray-700">مرتجع مشتريات</span>
+                    <span className="text-gray-700">مرتجع مبيعات</span>
                     <input
                       type="checkbox"
-                      checked={filterPurchaseReturns}
-                      onChange={(e) =>
-                        setFilterPurchaseReturns(e.target.checked)
-                      }
+                      checked={filterSalesReturns}
+                      onChange={(e) => setFilterSalesReturns(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300"
                     />
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <span className="text-gray-700">مستحق دفع المشتريات</span>
+                    <span className="text-gray-700">مستحق دفع المبيعات</span>
                     <input
                       type="checkbox"
                       checked={filterPaymentDue}
                       onChange={(e) => setFilterPaymentDue(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300"
-                    />
-                  </label>
-                </div>
-
-                {/* Dropdowns Row */}
-                <div className="flex flex-wrap gap-8 justify-end items-end">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-gray-700 text-sm">من تاريخ:</label>
-                    <Input type="date" className="text-right" />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-gray-700 text-sm">إلى تاريخ:</label>
-                    <Input type="date" className="text-right" />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-gray-700 text-sm">الحالة:</label>
-                    <select
-                      value={filterStatus}
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                      className="border border-gray-300 rounded-md px-4 py-2 min-w-[200px] text-right"
-                    >
-                      <option value="لا احد">لا احد</option>
-                      <option value="نشط">نشط</option>
-                      <option value="غير نشط">غير نشط</option>
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-gray-700 text-sm">
-                      Assigned to:
-                    </label>
-                    <select
-                      value={filterAssignedTo}
-                      onChange={(e) => setFilterAssignedTo(e.target.value)}
-                      className="border border-gray-300 rounded-md px-4 py-2 min-w-[200px] text-right"
-                    >
-                      <option value="لا احد">لا احد</option>
-                      <option value="محمد مجدى محمد مجدى محمد مجدى">
-                        محمد مجدى محمد مجدى محمد مجدى
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Main Content Card */}
@@ -443,7 +397,7 @@ export default function SuppliersPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {suppliers.length === 0 ? (
+                  {customers.length === 0 ? (
                     <tr>
                       <td
                         colSpan={
@@ -456,9 +410,9 @@ export default function SuppliersPage() {
                       </td>
                     </tr>
                   ) : (
-                    suppliers.map((supplier) => (
+                    customers.map((customer) => (
                       <tr
-                        key={supplier.id}
+                        key={customer.id}
                         className="border-b border-gray-100 hover:bg-gray-50"
                       >
                         {visibleColumns.action && (
@@ -501,8 +455,8 @@ export default function SuppliersPage() {
                           key={col.key}
                           className="px-4 py-3 text-right text-sm whitespace-nowrap"
                         >
-                          {col.key === "unpaidPurchases" ||
-                          col.key === "purchaseReturnsTotal" ? (
+                          {col.key === "unpaidInvoices" ||
+                          col.key === "salesReturnsTotal" ? (
                             <span className="font-medium">L.E 0.00</span>
                           ) : col.key === "address" ? (
                             <span className="font-medium">المجموع:</span>
@@ -541,19 +495,19 @@ export default function SuppliersPage() {
         </main>
       </div>
 
-      {/* Add Supplier Modal */}
+      {/* Add Customer Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-red-500 text-white p-4 flex items-center justify-between rounded-t-lg">
+            <div className="bg-blue-600 text-white p-4 flex items-center justify-between rounded-t-lg">
               <button
                 onClick={() => setShowAddModal(false)}
                 className="text-white hover:text-gray-200"
               >
                 ×
               </button>
-              <h2 className="text-lg font-semibold">إضافة مورد</h2>
+              <h2 className="text-lg font-semibold">إضافة عميل</h2>
             </div>
 
             {/* Modal Body */}
@@ -656,7 +610,7 @@ export default function SuppliersPage() {
               >
                 إغلاق
               </Button>
-              <Button className="bg-red-500 hover:bg-red-600 text-white">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 حفظ
               </Button>
             </div>

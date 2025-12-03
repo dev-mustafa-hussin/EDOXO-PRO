@@ -979,12 +979,12 @@ function Input({ className, type, ...props }) {
 }
 ;
 }),
-"[project]/app/contacts/suppliers/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"[project]/app/contacts/customers/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s([
     "default",
-    ()=>SuppliersPage
+    ()=>CustomersPage
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
@@ -1073,13 +1073,13 @@ const columns = [
         sortable: true
     },
     {
-        key: "unpaidPurchases",
-        label: "مجموع المشتريات غير المدفوعة",
+        key: "unpaidInvoices",
+        label: "مجموع الفواتير غير المدفوعة",
         sortable: true
     },
     {
-        key: "purchaseReturnsTotal",
-        label: "اجمالى مستحق مرتجع المشتريات",
+        key: "salesReturnsTotal",
+        label: "اجمالى مستحق مرتجع المبيعات",
         sortable: true
     },
     {
@@ -1133,7 +1133,7 @@ const columns = [
         sortable: true
     }
 ];
-function SuppliersPage() {
+function CustomersPage() {
     const [sidebarCollapsed, setSidebarCollapsed] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [filterOpen, setFilterOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [searchTerm, setSearchTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
@@ -1146,13 +1146,13 @@ function SuppliersPage() {
     const [showAddModal, setShowAddModal] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     // Filter states
     const [filterPaymentDue, setFilterPaymentDue] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [filterPurchaseReturns, setFilterPurchaseReturns] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [filterSalesReturns, setFilterSalesReturns] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [filterPreviousBalance, setFilterPreviousBalance] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [filterOpeningBalance, setFilterOpeningBalance] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [filterStatus, setFilterStatus] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("لا احد");
     const [filterAssignedTo, setFilterAssignedTo] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("لا احد");
     // Sample data - empty for now
-    const suppliers = [];
+    const customers = [];
     const toggleColumnVisibility = (key)=>{
         setVisibleColumns((prev)=>({
                 ...prev,
@@ -1169,12 +1169,12 @@ function SuppliersPage() {
         });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "suppliers.csv";
+        link.download = "customers.csv";
         link.click();
     };
     const exportToExcel = ()=>{
         const headers = columns.filter((col)=>visibleColumns[col.key] && col.key !== "action").map((col)=>col.label);
-        let tableHtml = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>الموردين</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table dir="rtl">';
+        let tableHtml = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>العملاء</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table dir="rtl">';
         tableHtml += "<tr>" + headers.map((h)=>`<th>${h}</th>`).join("") + "</tr>";
         tableHtml += "</table></body></html>";
         const blob = new Blob([
@@ -1184,7 +1184,7 @@ function SuppliersPage() {
         });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "suppliers.xls";
+        link.download = "customers.xls";
         link.click();
     };
     const handlePrint = ()=>{
@@ -1194,7 +1194,7 @@ function SuppliersPage() {
             printWindow.document.write(`
         <html dir="rtl">
           <head>
-            <title>الموردين</title>
+            <title>العملاء</title>
             <style>
               body { font-family: 'Noto Sans Arabic', Arial, sans-serif; direction: rtl; padding: 20px; }
               h1 { text-align: center; color: #1e3a5f; }
@@ -1206,7 +1206,7 @@ function SuppliersPage() {
           </head>
           <body>
             <div class="print-date">تاريخ الطباعة: ${new Date().toLocaleDateString("ar-EG")}</div>
-            <h1>الموردين</h1>
+            <h1>العملاء</h1>
             <table>
               <thead><tr>${headers.map((h)=>`<th>${h}</th>`).join("")}</tr></thead>
               <tbody><tr><td colspan="${headers.length}" style="text-align: center;">لا توجد بيانات متاحة في الجدول</td></tr></tbody>
@@ -1227,7 +1227,7 @@ function SuppliersPage() {
                 onOpenCalculator: ()=>{},
                 onOpenProfit: ()=>{}
             }, void 0, false, {
-                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                fileName: "[project]/app/contacts/customers/page.tsx",
                 lineNumber: 185,
                 columnNumber: 7
             }, this),
@@ -1237,7 +1237,7 @@ function SuppliersPage() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sidebar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Sidebar"], {
                         collapsed: sidebarCollapsed
                     }, void 0, false, {
-                        fileName: "[project]/app/contacts/suppliers/page.tsx",
+                        fileName: "[project]/app/contacts/customers/page.tsx",
                         lineNumber: 192,
                         columnNumber: 9
                     }, this),
@@ -1250,9 +1250,9 @@ function SuppliersPage() {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                             className: "text-2xl font-bold text-gray-800",
-                                            children: "الموردين"
+                                            children: "العملاء"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
                                             lineNumber: 198,
                                             columnNumber: 15
                                         }, this),
@@ -1260,18 +1260,18 @@ function SuppliersPage() {
                                             className: "text-sm text-gray-500",
                                             children: "إدارة contacts: الخاص بك"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
                                             lineNumber: 199,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
                                     lineNumber: 197,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
-                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                fileName: "[project]/app/contacts/customers/page.tsx",
                                 lineNumber: 196,
                                 columnNumber: 11
                             }, this),
@@ -1286,20 +1286,20 @@ function SuppliersPage() {
                                                 className: "font-medium",
                                                 children: "التصفية"
                                             }, void 0, false, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                 lineNumber: 209,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$filter$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Filter$3e$__["Filter"], {
                                                 className: "w-5 h-5"
                                             }, void 0, false, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                 lineNumber: 210,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
                                         lineNumber: 205,
                                         columnNumber: 13
                                     }, this),
@@ -1316,7 +1316,7 @@ function SuppliersPage() {
                                                                 className: "text-gray-700",
                                                                 children: "الرصيد الافتتاحي"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                                 lineNumber: 218,
                                                                 columnNumber: 21
                                                             }, this),
@@ -1326,13 +1326,13 @@ function SuppliersPage() {
                                                                 onChange: (e)=>setFilterOpeningBalance(e.target.checked),
                                                                 className: "w-4 h-4 rounded border-gray-300"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                                 lineNumber: 219,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
                                                         lineNumber: 217,
                                                         columnNumber: 19
                                                     }, this),
@@ -1343,7 +1343,7 @@ function SuppliersPage() {
                                                                 className: "text-gray-700",
                                                                 children: "الرصيد المسبق"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                                 lineNumber: 229,
                                                                 columnNumber: 21
                                                             }, this),
@@ -1353,13 +1353,13 @@ function SuppliersPage() {
                                                                 onChange: (e)=>setFilterPreviousBalance(e.target.checked),
                                                                 className: "w-4 h-4 rounded border-gray-300"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                                 lineNumber: 230,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
                                                         lineNumber: 228,
                                                         columnNumber: 19
                                                     }, this),
@@ -1368,25 +1368,25 @@ function SuppliersPage() {
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-gray-700",
-                                                                children: "مرتجع مشتريات"
+                                                                children: "مرتجع مبيعات"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                                 lineNumber: 240,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                                 type: "checkbox",
-                                                                checked: filterPurchaseReturns,
-                                                                onChange: (e)=>setFilterPurchaseReturns(e.target.checked),
+                                                                checked: filterSalesReturns,
+                                                                onChange: (e)=>setFilterSalesReturns(e.target.checked),
                                                                 className: "w-4 h-4 rounded border-gray-300"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                                 lineNumber: 241,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
                                                         lineNumber: 239,
                                                         columnNumber: 19
                                                     }, this),
@@ -1395,10 +1395,10 @@ function SuppliersPage() {
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-gray-700",
-                                                                children: "مستحق دفع المشتريات"
+                                                                children: "مستحق دفع المبيعات"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 251,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 249,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1407,75 +1407,25 @@ function SuppliersPage() {
                                                                 onChange: (e)=>setFilterPaymentDue(e.target.checked),
                                                                 className: "w-4 h-4 rounded border-gray-300"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 252,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 250,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 250,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 248,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
                                                 lineNumber: 216,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex flex-wrap gap-8 justify-end items-end",
+                                                className: "flex flex-wrap gap-8 justify-end",
                                                 children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "flex flex-col gap-2",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                                                className: "text-gray-700 text-sm",
-                                                                children: "من تاريخ:"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 264,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
-                                                                type: "date",
-                                                                className: "text-right"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 265,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 263,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "flex flex-col gap-2",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                                                className: "text-gray-700 text-sm",
-                                                                children: "إلى تاريخ:"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 268,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
-                                                                type: "date",
-                                                                className: "text-right"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 269,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 267,
-                                                        columnNumber: 19
-                                                    }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "flex flex-col gap-2",
                                                         children: [
@@ -1483,8 +1433,8 @@ function SuppliersPage() {
                                                                 className: "text-gray-700 text-sm",
                                                                 children: "الحالة:"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 272,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 262,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1496,36 +1446,36 @@ function SuppliersPage() {
                                                                         value: "لا احد",
                                                                         children: "لا احد"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 278,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 268,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: "نشط",
                                                                         children: "نشط"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 279,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 269,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: "غير نشط",
                                                                         children: "غير نشط"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 280,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 270,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 273,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 263,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 271,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 261,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1535,8 +1485,8 @@ function SuppliersPage() {
                                                                 className: "text-gray-700 text-sm",
                                                                 children: "Assigned to:"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 284,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 274,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1548,45 +1498,45 @@ function SuppliersPage() {
                                                                         value: "لا احد",
                                                                         children: "لا احد"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 292,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 282,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: "محمد مجدى محمد مجدى محمد مجدى",
                                                                         children: "محمد مجدى محمد مجدى محمد مجدى"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 293,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 283,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 287,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 277,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 283,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 273,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 262,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 260,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
                                         lineNumber: 214,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
-                                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                                fileName: "[project]/app/contacts/customers/page.tsx",
                                 lineNumber: 204,
                                 columnNumber: 11
                             }, this),
@@ -1603,29 +1553,29 @@ function SuppliersPage() {
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$plus$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Plus$3e$__["Plus"], {
                                                         className: "w-4 h-4"
                                                     }, void 0, false, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 311,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 301,
                                                         columnNumber: 17
                                                     }, this),
                                                     "إضافة"
                                                 ]
                                             }, void 0, true, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 307,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 297,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 className: "text-gray-600 text-sm",
                                                 children: "كل contacts: الخاص بك"
                                             }, void 0, false, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 314,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 304,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                        lineNumber: 306,
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                        lineNumber: 296,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1640,13 +1590,13 @@ function SuppliersPage() {
                                                     onChange: (e)=>setSearchTerm(e.target.value),
                                                     className: "w-48 text-right"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 323,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 313,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 322,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 312,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1664,15 +1614,15 @@ function SuppliersPage() {
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$columns$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Columns$3e$__["Columns"], {
                                                                         className: "w-4 h-4"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 344,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 334,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     "رؤية العمود"
                                                                 ]
                                                             }, void 0, true, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 336,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 326,
                                                                 columnNumber: 19
                                                             }, this),
                                                             showColumnVisibility && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1686,33 +1636,33 @@ function SuppliersPage() {
                                                                                 onChange: ()=>toggleColumnVisibility(col.key),
                                                                                 className: "w-4 h-4 rounded border-gray-300"
                                                                             }, void 0, false, {
-                                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                                lineNumber: 354,
+                                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                                lineNumber: 344,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                 className: "text-sm text-gray-700",
                                                                                 children: col.label
                                                                             }, void 0, false, {
-                                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                                lineNumber: 360,
+                                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                                lineNumber: 350,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, col.key, true, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 350,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 340,
                                                                         columnNumber: 25
                                                                     }, this))
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 348,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 338,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 335,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 325,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1724,15 +1674,15 @@ function SuppliersPage() {
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$printer$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Printer$3e$__["Printer"], {
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 375,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 365,
                                                                 columnNumber: 19
                                                             }, this),
                                                             "طباعة"
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 369,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 359,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1744,15 +1694,15 @@ function SuppliersPage() {
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$spreadsheet$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileSpreadsheet$3e$__["FileSpreadsheet"], {
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 385,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 375,
                                                                 columnNumber: 19
                                                             }, this),
                                                             "تصدير إلى Excel"
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 379,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 369,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1764,15 +1714,15 @@ function SuppliersPage() {
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__["FileText"], {
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 395,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 385,
                                                                 columnNumber: 19
                                                             }, this),
                                                             "تصدير إلى CSV"
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 389,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 379,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1782,8 +1732,8 @@ function SuppliersPage() {
                                                                 className: "text-sm text-gray-600",
                                                                 children: "إدخالات"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 401,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 391,
                                                                 columnNumber: 19
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1795,88 +1745,88 @@ function SuppliersPage() {
                                                                         value: 25,
                                                                         children: "25"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 407,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 397,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: 50,
                                                                         children: "50"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 408,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 398,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: 100,
                                                                         children: "100"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 409,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 399,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: 200,
                                                                         children: "200"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 410,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 400,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: 500,
                                                                         children: "500"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 411,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 401,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: 1000,
                                                                         children: "1000"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 412,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 402,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                                         value: -1,
                                                                         children: "الكل"
                                                                     }, void 0, false, {
-                                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                        lineNumber: 413,
+                                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                        lineNumber: 403,
                                                                         columnNumber: 21
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 402,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 392,
                                                                 columnNumber: 19
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-sm text-gray-600",
                                                                 children: "عرض"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 415,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 405,
                                                                 columnNumber: 19
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 400,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 390,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 333,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 323,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                        lineNumber: 320,
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                        lineNumber: 310,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1899,60 +1849,60 @@ function SuppliersPage() {
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronUp$3e$__["ChevronUp"], {
                                                                                     className: "w-3 h-3 text-gray-400"
                                                                                 }, void 0, false, {
-                                                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                                    lineNumber: 436,
+                                                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                                    lineNumber: 426,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
                                                                                     className: "w-3 h-3 text-gray-400 -mt-1"
                                                                                 }, void 0, false, {
-                                                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                                    lineNumber: 437,
+                                                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                                    lineNumber: 427,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
-                                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                            lineNumber: 435,
+                                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                            lineNumber: 425,
                                                                             columnNumber: 31
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
-                                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                    lineNumber: 432,
+                                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                    lineNumber: 422,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             }, col.key, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 428,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 418,
                                                                 columnNumber: 25
                                                             }, this))
                                                     }, void 0, false, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 424,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 414,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 423,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 413,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
-                                                    children: suppliers.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
+                                                    children: customers.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                             colSpan: columns.filter((col)=>visibleColumns[col.key]).length,
                                                             className: "px-4 py-8 text-center text-gray-500",
                                                             children: "لا توجد بيانات متاحة في الجدول"
                                                         }, void 0, false, {
-                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                            lineNumber: 448,
+                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                            lineNumber: 438,
                                                             columnNumber: 23
                                                         }, this)
                                                     }, void 0, false, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 447,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 437,
                                                         columnNumber: 21
-                                                    }, this) : suppliers.map((supplier)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
+                                                    }, this) : customers.map((customer)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                                             className: "border-b border-gray-100 hover:bg-gray-50",
                                                             children: visibleColumns.action && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                                 className: "px-4 py-3",
@@ -1964,13 +1914,13 @@ function SuppliersPage() {
                                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
-                                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                                lineNumber: 468,
+                                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                                lineNumber: 458,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
-                                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                            lineNumber: 467,
+                                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                            lineNumber: 457,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1978,13 +1928,13 @@ function SuppliersPage() {
                                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$pencil$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Pencil$3e$__["Pencil"], {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
-                                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                                lineNumber: 471,
+                                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                                lineNumber: 461,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
-                                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                            lineNumber: 470,
+                                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                            lineNumber: 460,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1992,45 +1942,45 @@ function SuppliersPage() {
                                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trash$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Trash2$3e$__["Trash2"], {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
-                                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                                lineNumber: 474,
+                                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                                lineNumber: 464,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
-                                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                            lineNumber: 473,
+                                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                            lineNumber: 463,
                                                                             columnNumber: 31
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
-                                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                    lineNumber: 466,
+                                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                    lineNumber: 456,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 465,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 455,
                                                                 columnNumber: 27
                                                             }, this)
-                                                        }, supplier.id, false, {
-                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                            lineNumber: 460,
+                                                        }, customer.id, false, {
+                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                            lineNumber: 450,
                                                             columnNumber: 23
                                                         }, this))
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 445,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 435,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 422,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 412,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                        lineNumber: 421,
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                        lineNumber: 411,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2038,13 +1988,13 @@ function SuppliersPage() {
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "h-full bg-gradient-to-l from-gray-400 to-green-500 w-3/4"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 489,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 479,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                        lineNumber: 488,
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                        lineNumber: 478,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2055,44 +2005,44 @@ function SuppliersPage() {
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
                                                     children: columns.filter((col)=>visibleColumns[col.key]).map((col, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                             className: "px-4 py-3 text-right text-sm whitespace-nowrap",
-                                                            children: col.key === "unpaidPurchases" || col.key === "purchaseReturnsTotal" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            children: col.key === "unpaidInvoices" || col.key === "salesReturnsTotal" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "font-medium",
                                                                 children: "L.E 0.00"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 506,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 496,
                                                                 columnNumber: 29
                                                             }, this) : col.key === "address" ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "font-medium",
                                                                 children: "المجموع:"
                                                             }, void 0, false, {
-                                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                                lineNumber: 508,
+                                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                                lineNumber: 498,
                                                                 columnNumber: 29
                                                             }, this) : ""
                                                         }, col.key, false, {
-                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                            lineNumber: 500,
+                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                            lineNumber: 490,
                                                             columnNumber: 25
                                                         }, this))
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 496,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 486,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 495,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 485,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 494,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 484,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                        lineNumber: 493,
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                        lineNumber: 483,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2107,8 +2057,8 @@ function SuppliersPage() {
                                                         disabled: true,
                                                         children: "السابق"
                                                     }, void 0, false, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 522,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 512,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -2117,34 +2067,34 @@ function SuppliersPage() {
                                                         disabled: true,
                                                         children: "التالى"
                                                     }, void 0, false, {
-                                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                        lineNumber: 525,
+                                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                                        lineNumber: 515,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 521,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 511,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 className: "text-sm text-gray-600",
                                                 children: "عرض 0 إلى 0 من 0 إدخالات"
                                             }, void 0, false, {
-                                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                lineNumber: 529,
+                                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                                lineNumber: 519,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                        lineNumber: 520,
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                        lineNumber: 510,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
-                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                lineNumber: 304,
+                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                lineNumber: 294,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2156,26 +2106,26 @@ function SuppliersPage() {
                                         className: "text-blue-600",
                                         children: "V6.9"
                                     }, void 0, false, {
-                                        fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                        lineNumber: 538,
+                                        fileName: "[project]/app/contacts/customers/page.tsx",
+                                        lineNumber: 528,
                                         columnNumber: 13
                                     }, this),
                                     " | Copyright © 2025 All rights reserved."
                                 ]
                             }, void 0, true, {
-                                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                lineNumber: 536,
+                                fileName: "[project]/app/contacts/customers/page.tsx",
+                                lineNumber: 526,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
-                        fileName: "[project]/app/contacts/suppliers/page.tsx",
+                        fileName: "[project]/app/contacts/customers/page.tsx",
                         lineNumber: 194,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "[project]/app/contacts/suppliers/page.tsx",
+                fileName: "[project]/app/contacts/customers/page.tsx",
                 lineNumber: 191,
                 columnNumber: 7
             }, this),
@@ -2185,29 +2135,29 @@ function SuppliersPage() {
                     className: "bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "bg-red-500 text-white p-4 flex items-center justify-between rounded-t-lg",
+                            className: "bg-blue-600 text-white p-4 flex items-center justify-between rounded-t-lg",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     onClick: ()=>setShowAddModal(false),
                                     className: "text-white hover:text-gray-200",
                                     children: "×"
                                 }, void 0, false, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 550,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 540,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                     className: "text-lg font-semibold",
-                                    children: "إضافة مورد"
+                                    children: "إضافة عميل"
                                 }, void 0, false, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 556,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 546,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
-                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                            lineNumber: 549,
+                            fileName: "[project]/app/contacts/customers/page.tsx",
+                            lineNumber: 539,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2222,22 +2172,22 @@ function SuppliersPage() {
                                                     className: "block text-sm text-gray-700 mb-1 text-right",
                                                     children: "الإسم الثانى:"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 564,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 554,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
                                                     placeholder: "الإسم الثانى",
                                                     className: "text-right"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 567,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 557,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 563,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 553,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2246,8 +2196,8 @@ function SuppliersPage() {
                                                     className: "block text-sm text-gray-700 mb-1 text-right",
                                                     children: "الاسم:*"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 570,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 560,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2255,14 +2205,14 @@ function SuppliersPage() {
                                                     className: "text-right",
                                                     required: true
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 573,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 563,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 569,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 559,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2271,8 +2221,8 @@ function SuppliersPage() {
                                                     className: "block text-sm text-gray-700 mb-1 text-right",
                                                     children: "اللقب:"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 576,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 566,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2282,42 +2232,42 @@ function SuppliersPage() {
                                                             value: "السيد ال",
                                                             children: "السيد ال"
                                                         }, void 0, false, {
-                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                            lineNumber: 580,
+                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                            lineNumber: 570,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                             value: "السيدة",
                                                             children: "السيدة"
                                                         }, void 0, false, {
-                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                            lineNumber: 581,
+                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                            lineNumber: 571,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                             value: "الآنسة",
                                                             children: "الآنسة"
                                                         }, void 0, false, {
-                                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                            lineNumber: 582,
+                                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                                            lineNumber: 572,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 579,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 569,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 575,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 565,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 562,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 552,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2329,22 +2279,22 @@ function SuppliersPage() {
                                                     className: "block text-sm text-gray-700 mb-1 text-right",
                                                     children: "رقم الاتصال:"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 590,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 580,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
                                                     placeholder: "رقم الاتصال",
                                                     className: "text-right"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 593,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 583,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 589,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 579,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2353,8 +2303,8 @@ function SuppliersPage() {
                                                     className: "block text-sm text-gray-700 mb-1 text-right",
                                                     children: "البريد الإلكتروني:"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 596,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 586,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2362,20 +2312,20 @@ function SuppliersPage() {
                                                     className: "text-right",
                                                     type: "email"
                                                 }, void 0, false, {
-                                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                                    lineNumber: 599,
+                                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                                    lineNumber: 589,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 595,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 585,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 588,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 578,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2384,22 +2334,22 @@ function SuppliersPage() {
                                             className: "block text-sm text-gray-700 mb-1 text-right",
                                             children: "الرقم الضريبي:"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 609,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 599,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
                                             placeholder: "الرقم الضريبي",
                                             className: "text-right"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 612,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 602,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 608,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 598,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2408,8 +2358,8 @@ function SuppliersPage() {
                                             className: "block text-sm text-gray-700 mb-1 text-right",
                                             children: "الرصيد الافتتاحي:"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 617,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 607,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2417,14 +2367,14 @@ function SuppliersPage() {
                                             className: "text-right",
                                             type: "number"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 620,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 610,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 616,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 606,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2433,8 +2383,8 @@ function SuppliersPage() {
                                             className: "block text-sm text-gray-700 mb-1 text-right",
                                             children: "فترة الدفع:"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 629,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 619,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2442,14 +2392,14 @@ function SuppliersPage() {
                                             className: "text-right",
                                             type: "number"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 632,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 622,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 628,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 618,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2458,28 +2408,28 @@ function SuppliersPage() {
                                             className: "block text-sm text-gray-700 mb-1 text-right",
                                             children: "العنوان:"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 641,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 631,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
                                             placeholder: "العنوان",
                                             className: "w-full border border-gray-300 rounded-md px-3 py-2 text-right min-h-[80px] resize-y"
                                         }, void 0, false, {
-                                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                            lineNumber: 644,
+                                            fileName: "[project]/app/contacts/customers/page.tsx",
+                                            lineNumber: 634,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 640,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 630,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
-                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                            lineNumber: 560,
+                            fileName: "[project]/app/contacts/customers/page.tsx",
+                            lineNumber: 550,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2490,38 +2440,38 @@ function SuppliersPage() {
                                     className: "bg-gray-800 hover:bg-gray-900 text-white",
                                     children: "إغلاق"
                                 }, void 0, false, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 653,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 643,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
-                                    className: "bg-red-500 hover:bg-red-600 text-white",
+                                    className: "bg-blue-600 hover:bg-blue-700 text-white",
                                     children: "حفظ"
                                 }, void 0, false, {
-                                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                                    lineNumber: 659,
+                                    fileName: "[project]/app/contacts/customers/page.tsx",
+                                    lineNumber: 649,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
-                            fileName: "[project]/app/contacts/suppliers/page.tsx",
-                            lineNumber: 652,
+                            fileName: "[project]/app/contacts/customers/page.tsx",
+                            lineNumber: 642,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
-                    fileName: "[project]/app/contacts/suppliers/page.tsx",
-                    lineNumber: 547,
+                    fileName: "[project]/app/contacts/customers/page.tsx",
+                    lineNumber: 537,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
-                fileName: "[project]/app/contacts/suppliers/page.tsx",
-                lineNumber: 546,
+                fileName: "[project]/app/contacts/customers/page.tsx",
+                lineNumber: 536,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
-        fileName: "[project]/app/contacts/suppliers/page.tsx",
+        fileName: "[project]/app/contacts/customers/page.tsx",
         lineNumber: 184,
         columnNumber: 5
     }, this);
@@ -2529,4 +2479,4 @@ function SuppliersPage() {
 }),
 ];
 
-//# sourceMappingURL=_bf60679c._.js.map
+//# sourceMappingURL=_188653e9._.js.map
