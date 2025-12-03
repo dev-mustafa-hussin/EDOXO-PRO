@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import {
   Home,
   Users,
@@ -23,20 +23,20 @@ import {
   ChevronLeft,
   ChevronDown,
   Bell,
-} from "lucide-react"
+} from "lucide-react";
 
 interface SubItem {
-  label: string
-  href: string
+  label: string;
+  href: string;
 }
 
 interface MenuItem {
-  icon: React.ElementType
-  label: string
-  href?: string
-  hasEmoji?: boolean
-  hasDropdown?: boolean
-  subItems?: SubItem[]
+  icon: React.ElementType;
+  label: string;
+  href?: string;
+  hasEmoji?: boolean;
+  hasDropdown?: boolean;
+  subItems?: SubItem[];
 }
 
 const menuItems: MenuItem[] = [
@@ -60,7 +60,7 @@ const menuItems: MenuItem[] = [
       { label: "العملاء", href: "/contacts/customers" },
       { label: "مجموعات العملاء", href: "/contacts/customer-groups" },
       { label: "استيراد جهات الاتصال", href: "/contacts/import" },
-      { label: "دربطة", href: "/contacts/linking" },
+      { label: "خريطة", href: "/contacts/map" },
     ],
   },
   {
@@ -204,34 +204,34 @@ const menuItems: MenuItem[] = [
       { label: "عرض المتجر", href: "/ecommerce/view" },
     ],
   },
-]
+];
 
 interface SidebarProps {
-  collapsed: boolean
+  collapsed: boolean;
 }
 
 export function Sidebar({ collapsed }: SidebarProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
     "إدارة المستخدمين": pathname?.startsWith("/user-management") || false,
-  })
+  });
 
   const toggleDropdown = (label: string) => {
     setOpenDropdowns((prev) => ({
       ...prev,
       [label]: !prev[label],
-    }))
-  }
+    }));
+  };
 
   const isActive = (href?: string) => {
-    if (!href) return false
-    return pathname === href
-  }
+    if (!href) return false;
+    return pathname === href;
+  };
 
   const isParentActive = (subItems?: SubItem[]) => {
-    if (!subItems) return false
-    return subItems.some((item) => pathname === item.href)
-  }
+    if (!subItems) return false;
+    return subItems.some((item) => pathname === item.href);
+  };
 
   return (
     <aside
@@ -289,26 +289,29 @@ export function Sidebar({ collapsed }: SidebarProps) {
                 )}
               </Link>
             )}
-            {item.hasDropdown && item.subItems && openDropdowns[item.label] && !collapsed && (
-              <div className="bg-gray-50 border-r-2 border-gray-200">
-                {item.subItems.map((subItem, subIndex) => (
-                  <Link
-                    key={subIndex}
-                    href={subItem.href}
-                    className={`block px-10 py-2 text-sm transition-colors ${
-                      pathname === subItem.href
-                        ? "bg-blue-100 text-blue-600 font-medium"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-blue-600"
-                    }`}
-                  >
-                    {subItem.label}
-                  </Link>
-                ))}
-              </div>
-            )}
+            {item.hasDropdown &&
+              item.subItems &&
+              openDropdowns[item.label] &&
+              !collapsed && (
+                <div className="bg-gray-50 border-r-2 border-gray-200">
+                  {item.subItems.map((subItem, subIndex) => (
+                    <Link
+                      key={subIndex}
+                      href={subItem.href}
+                      className={`block px-10 py-2 text-sm transition-colors ${
+                        pathname === subItem.href
+                          ? "bg-blue-100 text-blue-600 font-medium"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+                      }`}
+                    >
+                      {subItem.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
           </div>
         ))}
       </nav>
     </aside>
-  )
+  );
 }

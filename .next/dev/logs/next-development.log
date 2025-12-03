@@ -140,3 +140,5 @@ It can also happen if the client has a browser extension installed which messes 
 [00:11:24.144] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/contacts/suppliers color: rgb(120, 120, 120) color: inherit {"dp":"/contacts/suppliers","o":"http://localhost:3000/contacts/suppliers","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.6.1","sv":"0.1.3","ts":1764745147174}
 [00:15:50.937] Server  LOG      ✓ Compiled in 1026ms
 [00:20:10.112] Server  LOG      ✓ Compiled in 563ms
+[00:25:55.546] Server  LOG      ✓ Compiled in 339ms
+[00:26:23.507] Server  LOG      ✓ Compiled in 2.4s

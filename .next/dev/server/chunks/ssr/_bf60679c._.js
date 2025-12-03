@@ -385,8 +385,8 @@ const menuItems = [
                 href: "/contacts/import"
             },
             {
-                label: "دربطة",
-                href: "/contacts/linking"
+                label: "خريطة",
+                href: "/contacts/map"
             }
         ]
     },
@@ -854,13 +854,13 @@ function Sidebar({ collapsed }) {
                                     children: subItem.label
                                 }, subIndex, false, {
                                     fileName: "[project]/components/sidebar.tsx",
-                                    lineNumber: 295,
-                                    columnNumber: 19
+                                    lineNumber: 298,
+                                    columnNumber: 21
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/components/sidebar.tsx",
-                            lineNumber: 293,
-                            columnNumber: 15
+                            lineNumber: 296,
+                            columnNumber: 17
                         }, this)
                     ]
                 }, index, true, {
