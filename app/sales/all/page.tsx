@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -15,13 +15,24 @@ import {
   Calendar,
 } from "lucide-react";
 import Link from "next/link";
+import { useSaleStore } from "@/store/sale-store";
+import { Sale } from "@/types/sales";
 
 export default function AllSalesPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { sales, fetchSales, isLoading } = useSaleStore();
+
+  useEffect(() => {
+    fetchSales();
+  }, [fetchSales]);
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onOpenCalculator={() => {}}
+        onOpenProfit={() => {}}
+      />
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
@@ -99,11 +110,79 @@ export default function AllSalesPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td colSpan={9} className="text-center py-8 text-gray-400">
-                      لا توجد مبيعات متاحة حاليا
-                    </td>
-                  </tr>
+                  {isLoading ? (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        جاري التحميل...
+                      </td>
+                    </tr>
+                  ) : sales.length > 0 ? (
+                    sales.map((sale: Sale) => (
+                      <tr
+                        key={sale.id}
+                        className="border-b hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="p-3 text-gray-600">{sale.date}</td>
+                        <td className="p-3 font-medium text-gray-900">
+                          {sale.invoiceNumber}
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          {sale.customerName}
+                        </td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs
+                             ${
+                               sale.paymentStatus === "paid"
+                                 ? "bg-green-100 text-green-700"
+                                 : sale.paymentStatus === "partial"
+                                 ? "bg-yellow-100 text-yellow-700"
+                                 : "bg-red-100 text-red-700"
+                             }`}
+                          >
+                            {sale.paymentStatus === "paid"
+                              ? "مدفوع"
+                              : sale.paymentStatus === "partial"
+                              ? "جزئي"
+                              : "غير مدفوع"}
+                          </span>
+                        </td>
+                        <td className="p-3 font-bold text-gray-800">
+                          {sale.grandTotal.toLocaleString()}
+                        </td>
+                        <td className="p-3 text-green-600">
+                          {sale.paidAmount.toLocaleString()}
+                        </td>
+                        <td className="p-3 text-red-600">
+                          {sale.dueAmount.toLocaleString()}
+                        </td>
+                        <td className="p-3 text-gray-600">{sale.createdBy}</td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-blue-600 hover:bg-blue-50"
+                            >
+                              <Printer className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        لا توجد مبيعات متاحة حاليا
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
