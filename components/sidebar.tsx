@@ -25,6 +25,9 @@ import {
   Bell,
 } from "lucide-react";
 
+import { useAuthStore } from "@/store/auth-store";
+import { UserRole } from "@/types/auth";
+
 interface SubItem {
   label: string;
   href: string;
@@ -37,14 +40,21 @@ interface MenuItem {
   hasEmoji?: boolean;
   hasDropdown?: boolean;
   subItems?: SubItem[];
+  allowedRoles?: UserRole[]; // New field for RBAC
 }
 
 const menuItems: MenuItem[] = [
-  { icon: Home, label: "الرئيسية", href: "/" },
+  {
+    icon: Home,
+    label: "الرئيسية",
+    href: "/",
+    allowedRoles: ["admin", "manager", "cashier"],
+  },
   {
     icon: Users,
     label: "إدارة المستخدمين",
     hasDropdown: true,
+    allowedRoles: ["admin"],
     subItems: [
       { label: "المستخدمين", href: "/user-management/users" },
       { label: "الصلاحيات", href: "/user-management/roles" },
@@ -55,6 +65,7 @@ const menuItems: MenuItem[] = [
     icon: Phone,
     label: "جهات الإتصال",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager"],
     subItems: [
       { label: "الموردين", href: "/contacts/suppliers" },
       { label: "العملاء", href: "/contacts/customers" },
@@ -67,6 +78,7 @@ const menuItems: MenuItem[] = [
     icon: Box,
     label: "المنتجات",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager"],
     subItems: [
       { label: "قائمة المنتجات", href: "/products/list" },
       { label: "أضف منتجا", href: "/products/add" },
@@ -86,6 +98,7 @@ const menuItems: MenuItem[] = [
     icon: ShoppingCart,
     label: "المشتريات",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager"],
     subItems: [
       { label: "قائمة المشتريات", href: "/purchases/list" },
       { label: "أضف مشتريات", href: "/purchases/add" },
@@ -96,6 +109,7 @@ const menuItems: MenuItem[] = [
     icon: BarChart3,
     label: "المبيعات",
     hasDropdown: true,
+    allowedRoles: ["admin", "cashier", "manager"],
     subItems: [
       { label: "كل المبيعات", href: "/sales/all" },
       { label: "إضافة رقم", href: "/sales/add" },
@@ -115,6 +129,7 @@ const menuItems: MenuItem[] = [
     icon: Warehouse,
     label: "تحويلات المخزون",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager"],
     subItems: [
       { label: "قائمة تحويلات المخزون", href: "/stock-transfers/list" },
       { label: "إضافة تحويل مخزون", href: "/stock-transfers/add" },
@@ -124,6 +139,7 @@ const menuItems: MenuItem[] = [
     icon: Trash2,
     label: "المخزون التالف",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager"],
     subItems: [
       { label: "قائمة المخزون التالف", href: "/damaged-stock/list" },
       { label: "أضف تالف", href: "/damaged-stock/add" },
@@ -133,6 +149,7 @@ const menuItems: MenuItem[] = [
     icon: DollarSign,
     label: "المصاريف",
     hasDropdown: true,
+    allowedRoles: ["admin"],
     subItems: [
       { label: "قائمة المصاريف", href: "/expenses/list" },
       { label: "اضافة للمصاريف", href: "/expenses/add" },
@@ -143,6 +160,7 @@ const menuItems: MenuItem[] = [
     icon: ClipboardList,
     label: "إدارة الشيكات",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager"],
     subItems: [
       { label: "قائمة الشيكات", href: "/checks/list" },
       { label: "إضافة شيك جديد", href: "/checks/add" },
@@ -152,6 +170,7 @@ const menuItems: MenuItem[] = [
     icon: FileText,
     label: "التقارير",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager", "cashier"], // Cashier view is limited inside the page
     subItems: [
       { label: "لوحة التقارير (جديد)", href: "/reports" },
       { label: "تقرير الربح / الخسارة", href: "/reports/profit-loss" },
@@ -173,11 +192,17 @@ const menuItems: MenuItem[] = [
       { label: "سجل الشيكات", href: "/reports/checks-log" },
     ],
   },
-  { icon: Bell, label: "نماذج الإشعارات", href: "/notifications" },
+  {
+    icon: Bell,
+    label: "نماذج الإشعارات",
+    href: "/notifications",
+    allowedRoles: ["admin"],
+  },
   {
     icon: Settings,
     label: "إعدادات",
     hasDropdown: true,
+    allowedRoles: ["admin"],
     subItems: [
       { label: "إعدادات الشركة", href: "/settings/company" },
       { label: "فروع النشاط", href: "/settings/branches" },
@@ -192,6 +217,7 @@ const menuItems: MenuItem[] = [
     icon: UserCog,
     label: "إدارة الجرد المخزني",
     hasDropdown: true,
+    allowedRoles: ["admin", "manager"],
     subItems: [{ label: "قائمة الجرد", href: "/inventory-audit/list" }],
   },
   {
@@ -199,6 +225,7 @@ const menuItems: MenuItem[] = [
     label: "المتجر الإلكترونى",
     hasEmoji: true,
     hasDropdown: true,
+    allowedRoles: ["admin"],
     subItems: [
       { label: "اعدادات المتجر الإلكترونى", href: "/ecommerce/settings" },
       { label: "الطلبات", href: "/ecommerce/orders" },
@@ -213,9 +240,15 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const pathname = usePathname();
+  const { user } = useAuthStore();
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
     "إدارة المستخدمين": pathname?.startsWith("/user-management") || false,
   });
+
+  const filteredItems = menuItems.filter(
+    (item) =>
+      !item.allowedRoles || (user && item.allowedRoles.includes(user.role))
+  );
 
   const toggleDropdown = (label: string) => {
     setOpenDropdowns((prev) => ({
@@ -241,7 +274,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
       }`}
     >
       <nav className="py-4">
-        {menuItems.map((item, index) => (
+        {filteredItems.map((item, index) => (
           <div key={index}>
             {item.hasDropdown ? (
               <button

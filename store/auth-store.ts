@@ -14,7 +14,7 @@ interface AuthState {
   setRoles: (roles: Role[]) => void;
 }
 
-// Mock initial user for development
+// Mock initial user for development (Change role here to test: 'admin', 'cashier', 'manager')
 const mockUser: User = {
   id: "1",
   name: "مدير النظام",
@@ -39,4 +39,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       user: state.user ? { ...state.user, ...updates } : null,
     })),
   setRoles: (roles) => set({ roles }),
+
+  // Helper to switch roles for testing
+  switchRole: (role: User["role"]) =>
+    set((state) => ({
+      user: state.user ? { ...state.user, role } : null,
+    })),
 }));
