@@ -84,7 +84,7 @@ export default function POSPage() {
         grandTotal: cart.grandTotal(),
         paidAmount: cart.grandTotal(),
         dueAmount: 0,
-        createdBy: "Cashier", // To be replaced with auth user
+        createdBy: "Cashier",
         createdAt: new Date().toISOString(),
       };
 
@@ -96,6 +96,9 @@ export default function POSPage() {
         description: `تم حفظ الفاتورة رقم ${newSale.invoiceNumber}`,
         variant: "default",
       });
+
+      // Redirect to invoice page for printing
+      router.push(`/sales/invoice/${newSale.id}`);
     } catch (error) {
       toast({
         title: "خطأ",

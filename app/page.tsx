@@ -63,8 +63,8 @@ export default function DashboardPage() {
             unpaidPurchases={unpaidPurchases}
             netProfit={netProfit}
           />
-          <SalesChart />
-          <AnnualChart />
+          <SalesChart sales={sales} />
+          <AnnualChart sales={sales} />
           <PaymentTables />
           <InventoryAlert />
           <SalesOrders />
