@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Purchase, PurchaseStatus } from "@/types/purchases";
 import { PaymentStatus } from "@/types/finance";
+import { useProductStore } from "./product-store";
 
 interface PurchaseStore {
   purchases: Purchase[];
@@ -67,6 +68,13 @@ export const usePurchaseStore = create<PurchaseStore>((set, get) => ({
     set({ isLoading: true });
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Update Inventory
+      const { increaseStock } = useProductStore.getState();
+      purchase.items.forEach((item) => {
+        increaseStock(item.productId, item.quantity);
+      });
+
       set((state) => ({
         purchases: [purchase, ...state.purchases],
         isLoading: false,

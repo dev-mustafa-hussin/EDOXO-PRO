@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Sale, SaleStatus } from "@/types/sales";
 import { PaymentStatus } from "@/types/finance";
+import { useProductStore } from "./product-store";
 
 interface SaleStore {
   sales: Sale[];
@@ -66,6 +67,13 @@ export const useSaleStore = create<SaleStore>((set, get) => ({
     set({ isLoading: true });
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Update Inventory
+      const { decreaseStock } = useProductStore.getState();
+      sale.items.forEach((item) => {
+        decreaseStock(item.productId, item.quantity);
+      });
+
       set((state) => ({
         sales: [sale, ...state.sales],
         isLoading: false,

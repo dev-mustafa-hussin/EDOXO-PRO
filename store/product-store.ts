@@ -16,6 +16,10 @@ interface ProductState {
 
   // Async Mock Actions (simulation)
   fetchProducts: () => Promise<void>;
+
+  // Inventory Actions
+  increaseStock: (productId: string, quantity: number) => void;
+  decreaseStock: (productId: string, quantity: number) => void;
 }
 
 export const useProductStore = create<ProductState>((set, get) => ({
@@ -51,5 +55,23 @@ export const useProductStore = create<ProductState>((set, get) => ({
         isLoading: false,
       });
     }, 1000);
+  },
+
+  increaseStock: (productId, quantity) => {
+    set((state) => ({
+      products: state.products.map((p) =>
+        p.id === productId ? { ...p, stock: p.stock + quantity } : p
+      ),
+    }));
+  },
+
+  decreaseStock: (productId, quantity) => {
+    set((state) => ({
+      products: state.products.map((p) =>
+        p.id === productId
+          ? { ...p, stock: Math.max(0, p.stock - quantity) }
+          : p
+      ),
+    }));
   },
 }));
