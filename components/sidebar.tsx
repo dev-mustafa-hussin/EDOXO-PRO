@@ -153,6 +153,7 @@ const menuItems: MenuItem[] = [
     label: "التقارير",
     hasDropdown: true,
     subItems: [
+      { label: "لوحة التقارير (جديد)", href: "/reports" },
       { label: "تقرير الربح / الخسارة", href: "/reports/profit-loss" },
       { label: "مشتريات ومستودعات", href: "/reports/purchases-warehouses" },
       { label: "تقرير الفواتير", href: "/reports/invoices" },

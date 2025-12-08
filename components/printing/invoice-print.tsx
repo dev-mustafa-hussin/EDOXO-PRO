@@ -1,22 +1,36 @@
 import { Sale } from "@/types/sales";
 import { format } from "date-fns";
+import { useCompanyStore } from "@/store/company-store";
 
 interface InvoicePrintProps {
   sale: Sale;
 }
 
 export function InvoicePrint({ sale }: InvoicePrintProps) {
+  const { settings } = useCompanyStore();
+
   return (
     <div
       className="bg-white p-8 max-w-[800px] mx-auto print:p-0 print:max-w-none"
       dir="rtl"
     >
       {/* Header */}
-      <div className="text-center mb-8 border-b pb-4">
-        <h1 className="text-2xl font-bold mb-2">EDOXO PRO</h1>
-        <p className="text-gray-600">نظام إدارة المبيعات والمخزون</p>
-        <p className="text-gray-500 text-sm mt-1">
-          الرقم الضريبي: 300012345678903
+      <div className="text-center mb-8 border-b pb-4 flex flex-col items-center">
+        {settings.logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={settings.logoUrl}
+            alt="Company Logo"
+            className="h-16 mb-2 object-contain"
+          />
+        )}
+        <h1 className="text-2xl font-bold mb-1">{settings.name}</h1>
+        <p className="text-gray-600 text-sm">{settings.address}</p>
+        <p className="text-gray-600 text-sm" dir="ltr">
+          {settings.phone}
+        </p>
+        <p className="text-gray-500 text-xs mt-1">
+          الرقم الضريبي: {settings.taxNumber}
         </p>
       </div>
 
@@ -86,11 +100,11 @@ export function InvoicePrint({ sale }: InvoicePrintProps) {
       </div>
 
       {/* Footer */}
-      <div className="text-center text-xs text-gray-500 border-t pt-4">
+      <div className="text-center text-xs text-gray-500 border-t pt-4 whitespace-pre-wrap">
         <p>شكراً لتعاملكم معنا!</p>
-        <p className="mt-1">
-          سياسة الاسترجاع: خلال 7 أيام مع إحضار الفاتورة الأصلية.
-        </p>
+        {settings.termsAndConditions && (
+          <p className="mt-1">{settings.termsAndConditions}</p>
+        )}
       </div>
     </div>
   );
