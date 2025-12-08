@@ -248,11 +248,11 @@ export default function CustomersPage() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <span className="text-gray-700">مستحق دفع المبيعات</span>
                     <input
-                      type="checkbox"
-                      checked={filterPaymentDue}
-                      onChange={(e) => setFilterPaymentDue(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300"
-          </div>
+  type="checkbox"
+  checked={filterPaymentDue}
+  onChange={(e) => setFilterPaymentDue(e.target.checked)}
+  className="w-4 h-4 rounded border-gray-300"
+/> 
 
           {/* Main Content Card */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
