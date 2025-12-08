@@ -9,73 +9,62 @@ import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Box, Save } from "lucide-react";
-import { useProductStore } from "@/store/product-store";
+import { Users, Save } from "lucide-react";
+import { useContactStore } from "@/store/contact-store";
 import { useRouter } from "next/navigation";
 
 // Define Validation Schema
-const productSchema = z.object({
-  name: z.string().min(3, "اسم المنتج يجب أن يكون 3 أحرف على الأقل"),
-  sku: z.string().min(1, "كود المنتج مطلوب"),
-  purchasePrice: z
+const customerSchema = z.object({
+  name: z.string().min(3, "اسم العميل يجب أن يكون 3 أحرف على الأقل"),
+  phone: z.string().min(10, "رقم الهاتف غير صالح"),
+  email: z
     .string()
-    .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-      message: "سعر الشراء يجب أن يكون رقماً موجباً",
-    }),
-  sellingPrice: z
-    .string()
-    .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-      message: "سعر البيع يجب أن يكون رقماً موجباً",
-    }),
-  description: z.string().optional(),
+    .email("البريد الإلكتروني غير صالح")
+    .optional()
+    .or(z.literal("")),
+  address: z.string().optional(),
+  taxNumber: z.string().optional(),
 });
 
-type ProductFormValues = z.infer<typeof productSchema>;
+type CustomerFormValues = z.infer<typeof customerSchema>;
 
-export default function AddProductPage() {
+export default function AddCustomerPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const router = useRouter();
-  const { addProduct } = useProductStore();
+  const { addContact } = useContactStore();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ProductFormValues>({
-    resolver: zodResolver(productSchema),
+  } = useForm<CustomerFormValues>({
+    resolver: zodResolver(customerSchema),
     defaultValues: {
       name: "",
-      sku: "",
-      purchasePrice: "",
-      sellingPrice: "",
-      description: "",
+      phone: "",
+      email: "",
+      address: "",
+      taxNumber: "",
     },
   });
 
-  const onSubmit = async (data: ProductFormValues) => {
-    // Simulate API delay
+  const onSubmit = async (data: CustomerFormValues) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    addProduct({
+    addContact({
       id: Math.random().toString(36).substr(2, 9),
+      type: "customer",
       name: data.name,
-      sku: data.sku,
-      purchasePrice: Number(data.purchasePrice),
-      sellingPrice: Number(data.sellingPrice),
-      description: data.description,
-      categoryId: "general", // Default for now
-      unitId: "pcs", // Default for now
-      taxRate: 0.15,
-      alertQuantity: 10,
-      currentStock: 0,
-      type: "standard",
-      hasVariants: false,
+      phone: data.phone,
+      email: data.email || undefined,
+      address: data.address,
+      taxNumber: data.taxNumber,
+      balance: 0,
       status: "active",
       createdAt: new Date().toISOString(),
     });
 
-    // Redirect to list
-    router.push("/products/list");
+    router.push("/contacts/customers");
   };
 
   return (
@@ -87,15 +76,15 @@ export default function AddProductPage() {
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
             <span>الرئيسية</span>
             <span>/</span>
-            <span>المنتجات</span>
+            <span>العملاء</span>
             <span>/</span>
-            <span className="text-blue-600">أضف منتجا</span>
+            <span className="text-blue-600">أضف عميل</span>
           </div>
 
           <div className="flex items-center gap-3 mb-6">
-            <Box className="w-6 h-6 text-blue-600" />
+            <Users className="w-6 h-6 text-blue-600" />
             <h1 className="text-xl font-semibold text-gray-800">
-              أضف منتجا جديدا
+              أضف عميل جديد
             </h1>
           </div>
 
@@ -107,11 +96,11 @@ export default function AddProductPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">
-                    اسم المنتج <span className="text-red-500">*</span>
+                    اسم العميل <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="name"
-                    placeholder="اسم المنتج"
+                    placeholder="الاسم الكامل"
                     {...register("name")}
                     className={errors.name ? "border-red-500" : ""}
                   />
@@ -123,63 +112,55 @@ export default function AddProductPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="sku">
-                    كود المنتج (SKU) <span className="text-red-500">*</span>
+                  <Label htmlFor="phone">
+                    رقم الهاتف <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="sku"
-                    placeholder="Code / SKU"
-                    {...register("sku")}
-                    className={errors.sku ? "border-red-500" : ""}
+                    id="phone"
+                    placeholder="05xxxxxxxx"
+                    {...register("phone")}
+                    className={errors.phone ? "border-red-500" : ""}
                   />
-                  {errors.sku && (
-                    <p className="text-red-500 text-xs">{errors.sku.message}</p>
+                  {errors.phone && (
+                    <p className="text-red-500 text-xs">
+                      {errors.phone.message}
+                    </p>
                   )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="purchasePrice">سعر الشراء</Label>
+                  <Label htmlFor="email">البريد الإلكتروني</Label>
                   <Input
-                    id="purchasePrice"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    {...register("purchasePrice")}
-                    className={errors.purchasePrice ? "border-red-500" : ""}
+                    id="email"
+                    type="email"
+                    placeholder="example@mail.com"
+                    {...register("email")}
+                    className={errors.email ? "border-red-500" : ""}
                   />
-                  {errors.purchasePrice && (
+                  {errors.email && (
                     <p className="text-red-500 text-xs">
-                      {errors.purchasePrice.message}
+                      {errors.email.message}
                     </p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="sellingPrice">سعر البيع</Label>
+                  <Label htmlFor="taxNumber">الرقم الضريبي</Label>
                   <Input
-                    id="sellingPrice"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    {...register("sellingPrice")}
-                    className={errors.sellingPrice ? "border-red-500" : ""}
+                    id="taxNumber"
+                    placeholder="الرقم الضريبي"
+                    {...register("taxNumber")}
                   />
-                  {errors.sellingPrice && (
-                    <p className="text-red-500 text-xs">
-                      {errors.sellingPrice.message}
-                    </p>
-                  )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">الوصف</Label>
+                <Label htmlFor="address">العنوان</Label>
                 <Input
-                  id="description"
-                  className="h-20"
-                  placeholder="وصف المنتج..."
-                  {...register("description")}
+                  id="address"
+                  placeholder="العنوان الكامل..."
+                  {...register("address")}
                 />
               </div>
 
@@ -190,7 +171,7 @@ export default function AddProductPage() {
                   className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto gap-2"
                 >
                   <Save className="w-4 h-4" />
-                  {isSubmitting ? "جاري الحفظ..." : "حفظ المنتج"}
+                  {isSubmitting ? "جاري الحفظ..." : "حفظ العميل"}
                 </Button>
 
                 <Button

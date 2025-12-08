@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,27 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
+import { useProductStore } from "@/store/product-store";
 
-export default function ProductsCreatePage() {
+export default function ProductsListPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { products, fetchProducts, deleteProduct, isLoading } =
+    useProductStore();
+
+  useEffect(() => {
+    // Only fetch if empty to persist added data during navigation session
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, [fetchProducts, products.length]);
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onOpenCalculator={() => {}}
+        onOpenProfit={() => {}}
+      />
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
@@ -48,7 +62,9 @@ export default function ProductsCreatePage() {
                 <h2 className="text-lg font-semibold text-gray-800">
                   المنتجات
                 </h2>
-                <p className="text-sm text-gray-500">إدارة جميع المنتجات</p>
+                <p className="text-sm text-gray-500">
+                  إدارة جميع المنتجات ({products.length})
+                </p>
               </div>
               <Link href="/products/add">
                 <Button className="bg-blue-600 hover:bg-blue-700 gap-2">
@@ -84,25 +100,96 @@ export default function ProductsCreatePage() {
                 <thead className="bg-gray-50">
                   <tr className="border-b text-right">
                     <th className="p-3 font-medium text-gray-600">#</th>
-                    <th className="p-3 font-medium text-gray-600">الصورة</th>
+                    <th className="p-3 font-medium text-gray-600">الاسم</th>
                     <th className="p-3 font-medium text-gray-600">
-                      اسم المنتج
+                      الكود (SKU)
                     </th>
-                    <th className="p-3 font-medium text-gray-600">الكود</th>
+                    <th className="p-3 font-medium text-gray-600">النوع</th>
                     <th className="p-3 font-medium text-gray-600">
-                      العلامة التجارية
+                      سعر الشراء
                     </th>
-                    <th className="p-3 font-medium text-gray-600">القسم</th>
-                    <th className="p-3 font-medium text-gray-600">السعر</th>
+                    <th className="p-3 font-medium text-gray-600">سعر البيع</th>
+                    <th className="p-3 font-medium text-gray-600">الحالة</th>
                     <th className="p-3 font-medium text-gray-600">خيارات</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td colSpan={8} className="text-center py-8 text-gray-400">
-                      لا توجد منتجات متاحة حاليا
-                    </td>
-                  </tr>
+                  {isLoading ? (
+                    <tr>
+                      <td
+                        colSpan={8}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        جاري التحميل...
+                      </td>
+                    </tr>
+                  ) : products.length > 0 ? (
+                    products.map((product: any, index: number) => (
+                      <tr
+                        key={product.id}
+                        className="border-b hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="p-3 text-gray-600">{index + 1}</td>
+                        <td className="p-3 font-medium text-gray-900">
+                          {product.name}
+                        </td>
+                        <td className="p-3 text-gray-600 font-mono">
+                          {product.sku}
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs">
+                            {product.type}
+                          </span>
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          {product.purchasePrice}
+                        </td>
+                        <td className="p-3 font-semibold text-green-600">
+                          {product.sellingPrice}
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          <span className="bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs">
+                            {product.status}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => deleteProduct(product.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={8}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        لا توجد منتجات متاحة حاليا
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

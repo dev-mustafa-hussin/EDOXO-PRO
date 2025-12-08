@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -18,33 +18,9 @@ import {
   Trash2,
   Eye,
 } from "lucide-react";
-
-interface Supplier {
-  id: string;
-  contactId: string;
-  name: string;
-  businessName: string;
-  email: string;
-  taxNumber: string;
-  paymentPeriod: string;
-  openingBalance: string;
-  previousBalance: string;
-  addedOn: string;
-  address: string;
-  mobile: string;
-  unpaidPurchases: string;
-  purchaseReturnsTotal: string;
-  customField1: string;
-  customField2: string;
-  customField3: string;
-  customField4: string;
-  customField5: string;
-  customField6: string;
-  customField7: string;
-  customField8: string;
-  customField9: string;
-  customField10: string;
-}
+import Link from "next/link";
+import { useContactStore } from "@/store/contact-store";
+import { Contact } from "@/types/contacts";
 
 const columns = [
   { key: "action", label: "خيار", sortable: false },
@@ -69,16 +45,6 @@ const columns = [
     label: "اجمالى مستحق مرتجع المشتريات",
     sortable: true,
   },
-  { key: "customField1", label: "حقل مخصص 1", sortable: true },
-  { key: "customField2", label: "حقل مخصص", sortable: true },
-  { key: "customField3", label: "حقل مخصص 3", sortable: true },
-  { key: "customField4", label: "حقل مخصص 4", sortable: true },
-  { key: "customField5", label: "حقل مخصص 5", sortable: true },
-  { key: "customField6", label: "حقل مخصص 6", sortable: true },
-  { key: "customField7", label: "حقل مخصص 7", sortable: true },
-  { key: "customField8", label: "حقل مخصص 8", sortable: true },
-  { key: "customField9", label: "حقل مخصص 9", sortable: true },
-  { key: "customField10", label: "حقل مخصص 10", sortable: true },
 ];
 
 export default function SuppliersPage() {
@@ -90,7 +56,6 @@ export default function SuppliersPage() {
     Object.fromEntries(columns.map((col) => [col.key, true]))
   );
   const [showColumnVisibility, setShowColumnVisibility] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
 
   // Filter states
   const [filterPaymentDue, setFilterPaymentDue] = useState(false);
@@ -100,8 +65,22 @@ export default function SuppliersPage() {
   const [filterStatus, setFilterStatus] = useState("لا احد");
   const [filterAssignedTo, setFilterAssignedTo] = useState("لا احد");
 
-  // Sample data - empty for now
-  const suppliers: Supplier[] = [];
+  // Store integration
+  const {
+    contacts,
+    fetchContacts,
+    deleteContact,
+    getContactsByType,
+    isLoading,
+  } = useContactStore();
+
+  useEffect(() => {
+    if (contacts.length === 0) {
+      fetchContacts();
+    }
+  }, [fetchContacts, contacts.length]);
+
+  const suppliers = getContactsByType("supplier");
 
   const toggleColumnVisibility = (key: string) => {
     setVisibleColumns((prev) => ({
@@ -111,73 +90,15 @@ export default function SuppliersPage() {
   };
 
   const exportToCSV = () => {
-    const headers = columns
-      .filter((col) => visibleColumns[col.key] && col.key !== "action")
-      .map((col) => col.label);
-    const csvContent = "\uFEFF" + headers.join(",") + "\n";
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "suppliers.csv";
-    link.click();
+    alert("Export feature coming soon");
   };
 
   const exportToExcel = () => {
-    const headers = columns
-      .filter((col) => visibleColumns[col.key] && col.key !== "action")
-      .map((col) => col.label);
-    let tableHtml =
-      '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>الموردين</x:Name><x:WorksheetOptions><x:DisplayRightToLeft/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table dir="rtl">';
-    tableHtml +=
-      "<tr>" + headers.map((h) => `<th>${h}</th>`).join("") + "</tr>";
-    tableHtml += "</table></body></html>";
-    const blob = new Blob([tableHtml], {
-      type: "application/vnd.ms-excel;charset=utf-8;",
-    });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "suppliers.xls";
-    link.click();
+    alert("Export feature coming soon");
   };
 
   const handlePrint = () => {
-    const headers = columns
-      .filter((col) => visibleColumns[col.key] && col.key !== "action")
-      .map((col) => col.label);
-    const printWindow = window.open("", "_blank");
-    if (printWindow) {
-      printWindow.document.write(`
-        <html dir="rtl">
-          <head>
-            <title>الموردين</title>
-            <style>
-              body { font-family: 'Noto Sans Arabic', Arial, sans-serif; direction: rtl; padding: 20px; }
-              h1 { text-align: center; color: #1e3a5f; }
-              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-              th, td { border: 1px solid #ddd; padding: 10px; text-align: right; }
-              th { background-color: #f8f9fa; font-weight: bold; }
-              .print-date { text-align: left; color: #666; font-size: 12px; margin-bottom: 20px; }
-            </style>
-          </head>
-          <body>
-            <div class="print-date">تاريخ الطباعة: ${new Date().toLocaleDateString(
-              "ar-EG"
-            )}</div>
-            <h1>الموردين</h1>
-            <table>
-              <thead><tr>${headers
-                .map((h) => `<th>${h}</th>`)
-                .join("")}</tr></thead>
-              <tbody><tr><td colspan="${
-                headers.length
-              }" style="text-align: center;">لا توجد بيانات متاحة في الجدول</td></tr></tbody>
-            </table>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.print();
-    }
+    window.print();
   };
 
   return (
@@ -196,7 +117,9 @@ export default function SuppliersPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">الموردين</h1>
-              <p className="text-sm text-gray-500">إدارة contacts: الخاص بك</p>
+              <p className="text-sm text-gray-500">
+                إدارة جهات الاتصال الخاصة بك ({suppliers.length})
+              </p>
             </div>
           </div>
 
@@ -304,15 +227,14 @@ export default function SuppliersPage() {
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
             {/* Header with Add Button */}
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <Button
-                onClick={() => setShowAddModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                إضافة
-              </Button>
+              <Link href="/contacts/suppliers/add">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  إضافة
+                </Button>
+              </Link>
               <span className="text-gray-600 text-sm">
-                كل contacts: الخاص بك
+                كل جهات الاتصال الخاصة بك
               </span>
             </div>
 
@@ -395,25 +317,6 @@ export default function SuppliersPage() {
                   <FileText className="w-4 h-4" />
                   تصدير إلى CSV
                 </Button>
-
-                {/* Entries per page */}
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">إدخالات</span>
-                  <select
-                    value={entriesPerPage}
-                    onChange={(e) => setEntriesPerPage(Number(e.target.value))}
-                    className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-                  >
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                    <option value={200}>200</option>
-                    <option value={500}>500</option>
-                    <option value={1000}>1000</option>
-                    <option value={-1}>الكل</option>
-                  </select>
-                  <span className="text-sm text-gray-600">عرض</span>
-                </div>
               </div>
             </div>
 
@@ -443,7 +346,16 @@ export default function SuppliersPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {suppliers.length === 0 ? (
+                  {isLoading ? (
+                    <tr>
+                      <td
+                        colSpan={columns.length}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        جاري التحميل...
+                      </td>
+                    </tr>
+                  ) : suppliers.length === 0 ? (
                     <tr>
                       <td
                         colSpan={
@@ -456,7 +368,7 @@ export default function SuppliersPage() {
                       </td>
                     </tr>
                   ) : (
-                    suppliers.map((supplier) => (
+                    suppliers.map((supplier: Contact) => (
                       <tr
                         key={supplier.id}
                         className="border-b border-gray-100 hover:bg-gray-50"
@@ -470,48 +382,77 @@ export default function SuppliersPage() {
                               <button className="p-1 text-green-600 hover:bg-green-50 rounded">
                                 <Pencil className="w-4 h-4" />
                               </button>
-                              <button className="p-1 text-red-600 hover:bg-red-50 rounded">
+                              <button
+                                onClick={() => deleteContact(supplier.id)}
+                                className="p-1 text-red-600 hover:bg-red-50 rounded"
+                              >
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
                           </td>
                         )}
-                        {/* Add other columns as needed */}
+                        {visibleColumns.contactId && (
+                          <td className="px-4 py-3 text-right">
+                            {supplier.id.substring(0, 8)}
+                          </td>
+                        )}
+                        {visibleColumns.name && (
+                          <td className="px-4 py-3 text-right font-medium">
+                            {supplier.name}
+                          </td>
+                        )}
+                        {visibleColumns.businessName && (
+                          <td className="px-4 py-3 text-right">
+                            {supplier.companyName || "-"}
+                          </td>
+                        )}
+                        {visibleColumns.email && (
+                          <td className="px-4 py-3 text-right">
+                            {supplier.email || "-"}
+                          </td>
+                        )}
+                        {visibleColumns.taxNumber && (
+                          <td className="px-4 py-3 text-right">
+                            {supplier.taxNumber || "-"}
+                          </td>
+                        )}
+
+                        {/* Default placeholders for fields not in our simple mock model yet */}
+                        {visibleColumns.paymentPeriod && (
+                          <td className="px-4 py-3 text-right">-</td>
+                        )}
+                        {visibleColumns.openingBalance && (
+                          <td className="px-4 py-3 text-right">0.00</td>
+                        )}
+                        {visibleColumns.previousBalance && (
+                          <td className="px-4 py-3 text-right">0.00</td>
+                        )}
+                        {visibleColumns.addedOn && (
+                          <td className="px-4 py-3 text-right">
+                            {new Date(supplier.createdAt).toLocaleDateString(
+                              "ar-EG"
+                            )}
+                          </td>
+                        )}
+                        {visibleColumns.address && (
+                          <td className="px-4 py-3 text-right">
+                            {supplier.address || "-"}
+                          </td>
+                        )}
+                        {visibleColumns.mobile && (
+                          <td className="px-4 py-3 text-right">
+                            {supplier.phone}
+                          </td>
+                        )}
+                        {visibleColumns.unpaidPurchases && (
+                          <td className="px-4 py-3 text-right">0.00</td>
+                        )}
+                        {visibleColumns.purchaseReturnsTotal && (
+                          <td className="px-4 py-3 text-right">0.00</td>
+                        )}
                       </tr>
                     ))
                   )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="h-2 bg-gray-200">
-              <div className="h-full bg-gradient-to-l from-gray-400 to-green-500 w-3/4"></div>
-            </div>
-
-            {/* Totals Row */}
-            <div className="overflow-x-auto bg-gray-100">
-              <table className="w-full min-w-max">
-                <tbody>
-                  <tr>
-                    {columns
-                      .filter((col) => visibleColumns[col.key])
-                      .map((col, index) => (
-                        <td
-                          key={col.key}
-                          className="px-4 py-3 text-right text-sm whitespace-nowrap"
-                        >
-                          {col.key === "unpaidPurchases" ||
-                          col.key === "purchaseReturnsTotal" ? (
-                            <span className="font-medium">L.E 0.00</span>
-                          ) : col.key === "address" ? (
-                            <span className="font-medium">المجموع:</span>
-                          ) : (
-                            ""
-                          )}
-                        </td>
-                      ))}
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -527,7 +468,7 @@ export default function SuppliersPage() {
                 </Button>
               </div>
               <span className="text-sm text-gray-600">
-                عرض 0 إلى 0 من 0 إدخالات
+                عرض {suppliers.length} من {suppliers.length} إدخالات
               </span>
             </div>
           </div>
@@ -540,129 +481,6 @@ export default function SuppliersPage() {
           </div>
         </main>
       </div>
-
-      {/* Add Supplier Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="bg-red-500 text-white p-4 flex items-center justify-between rounded-t-lg">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="text-white hover:text-gray-200"
-              >
-                ×
-              </button>
-              <h2 className="text-lg font-semibold">إضافة مورد</h2>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 space-y-4">
-              {/* Row 1: Title, Name, Second Name */}
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1 text-right">
-                    الإسم الثانى:
-                  </label>
-                  <Input placeholder="الإسم الثانى" className="text-right" />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1 text-right">
-                    الاسم:*
-                  </label>
-                  <Input placeholder="الاسم" className="text-right" required />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1 text-right">
-                    اللقب:
-                  </label>
-                  <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-right">
-                    <option value="السيد ال">السيد ال</option>
-                    <option value="السيدة">السيدة</option>
-                    <option value="الآنسة">الآنسة</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Row 2: Email, Phone */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1 text-right">
-                    رقم الاتصال:
-                  </label>
-                  <Input placeholder="رقم الاتصال" className="text-right" />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1 text-right">
-                    البريد الإلكتروني:
-                  </label>
-                  <Input
-                    placeholder="البريد الإلكتروني"
-                    className="text-right"
-                    type="email"
-                  />
-                </div>
-              </div>
-
-              {/* Row 3: Tax Number */}
-              <div>
-                <label className="block text-sm text-gray-700 mb-1 text-right">
-                  الرقم الضريبي:
-                </label>
-                <Input placeholder="الرقم الضريبي" className="text-right" />
-              </div>
-
-              {/* Row 4: Opening Balance */}
-              <div>
-                <label className="block text-sm text-gray-700 mb-1 text-right">
-                  الرصيد الافتتاحي:
-                </label>
-                <Input
-                  placeholder="الرصيد الافتتاحي"
-                  className="text-right"
-                  type="number"
-                />
-              </div>
-
-              {/* Row 5: Payment Period */}
-              <div>
-                <label className="block text-sm text-gray-700 mb-1 text-right">
-                  فترة الدفع:
-                </label>
-                <Input
-                  placeholder="فترة الدفع (بالأيام)"
-                  className="text-right"
-                  type="number"
-                />
-              </div>
-
-              {/* Row 6: Address */}
-              <div>
-                <label className="block text-sm text-gray-700 mb-1 text-right">
-                  العنوان:
-                </label>
-                <textarea
-                  placeholder="العنوان"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-right min-h-[80px] resize-y"
-                />
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="border-t border-gray-200 p-4 flex items-center gap-3">
-              <Button
-                onClick={() => setShowAddModal(false)}
-                className="bg-gray-800 hover:bg-gray-900 text-white"
-              >
-                إغلاق
-              </Button>
-              <Button className="bg-red-500 hover:bg-red-600 text-white">
-                حفظ
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

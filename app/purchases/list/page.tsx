@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,24 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { usePurchaseStore } from "@/store/purchase-store";
+import { Purchase } from "@/types/purchases";
+
 export default function PurchasesListPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { purchases, fetchPurchases, isLoading } = usePurchaseStore();
+
+  useEffect(() => {
+    fetchPurchases();
+  }, [fetchPurchases]);
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onOpenCalculator={() => {}}
+        onOpenProfit={() => {}}
+      />
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
@@ -105,11 +117,100 @@ export default function PurchasesListPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td colSpan={9} className="text-center py-8 text-gray-400">
-                      لا توجد مشتريات متاحة حاليا
-                    </td>
-                  </tr>
+                  {isLoading ? (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        جاري التحميل...
+                      </td>
+                    </tr>
+                  ) : purchases.length > 0 ? (
+                    purchases.map((purchase: Purchase) => (
+                      <tr
+                        key={purchase.id}
+                        className="border-b hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="p-3 text-gray-600">{purchase.date}</td>
+                        <td className="p-3 font-medium text-gray-900">
+                          {purchase.referenceNumber}
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          {purchase.supplierName}
+                        </td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs
+                             ${
+                               purchase.status === "received"
+                                 ? "bg-green-100 text-green-700"
+                                 : purchase.status === "pending"
+                                 ? "bg-yellow-100 text-yellow-700"
+                                 : purchase.status === "ordered"
+                                 ? "bg-blue-100 text-blue-700"
+                                 : "bg-red-100 text-red-700"
+                             }`}
+                          >
+                            {purchase.status === "received"
+                              ? "تم الاستلام"
+                              : purchase.status === "pending"
+                              ? "قيد الانتظار"
+                              : purchase.status === "ordered"
+                              ? "تم الطلب"
+                              : "ملغي"}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs
+                             ${
+                               purchase.paymentStatus === "paid"
+                                 ? "bg-green-100 text-green-700"
+                                 : purchase.paymentStatus === "partial"
+                                 ? "bg-yellow-100 text-yellow-700"
+                                 : "bg-red-100 text-red-700"
+                             }`}
+                          >
+                            {purchase.paymentStatus === "paid"
+                              ? "مدفوع"
+                              : purchase.paymentStatus === "partial"
+                              ? "جزئي"
+                              : "غير مدفوع"}
+                          </span>
+                        </td>
+                        <td className="p-3 font-bold text-gray-800">
+                          {purchase.grandTotal.toLocaleString()}
+                        </td>
+                        <td className="p-3 text-green-600">
+                          {purchase.paidAmount.toLocaleString()}
+                        </td>
+                        <td className="p-3 text-red-600">
+                          {purchase.dueAmount.toLocaleString()}
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-blue-600 hover:bg-blue-50"
+                            >
+                              <Printer className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        لا توجد مشتريات متاحة حاليا
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
