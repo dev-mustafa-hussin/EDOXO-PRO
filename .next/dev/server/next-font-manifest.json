@@ -1,11 +1,5 @@
 {
   "app": {
-    "[project]/app/contacts/customers/page": [
-      "static/media/3fd1b3eda9c5392f-s.p.2ae7fa5d.woff2"
-    ],
-    "[project]/app/contacts/suppliers/page": [
-      "static/media/3fd1b3eda9c5392f-s.p.2ae7fa5d.woff2"
-    ],
     "[project]/app/page": [
       "static/media/3fd1b3eda9c5392f-s.p.2ae7fa5d.woff2"
     ]
