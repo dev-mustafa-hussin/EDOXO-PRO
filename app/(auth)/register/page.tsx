@@ -10,14 +10,10 @@ import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
-
 import {
   Select,
   SelectContent,
@@ -26,14 +22,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
   const router = useRouter();
-  // Combined state for all fields
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
+    // Step 1: Business Details
     businessName: "",
-    startDate: "",
-    currency: "",
+    startDate: new Date().toISOString().split("T")[0],
+    currency: "EGP",
+    website: "",
+    mobile: "",
+    country: "Egypt",
+    city: "",
+    state: "",
+    zipCode: "",
+
+    // Step 2: Tax & Settings
+    taxName1: "",
+    taxNumber1: "",
+    taxName2: "",
+    taxNumber2: "",
+    fyStartDate: new Date().getFullYear() + "-01-01",
+    accountingMethod: "fifo",
+
+    // Step 3: Owner Details
+    prefix: "",
     firstName: "",
     lastName: "",
     username: "",
@@ -42,8 +62,6 @@ export default function RegisterPage() {
     password_confirmation: "",
     terms: false,
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -57,49 +75,70 @@ export default function RegisterPage() {
     setFormData({ ...formData, terms: checked });
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const validateStep = (currentStep: number) => {
     setError("");
+    if (currentStep === 1) {
+      if (!formData.businessName) return "اسم النشاط مطلوب";
+      if (!formData.currency) return "العملة مطلوبة";
+    }
+    if (currentStep === 2) {
+      if (!formData.fyStartDate) return "تاريخ بداية السنة المالية مطلوب";
+    }
+    if (currentStep === 3) {
+      if (!formData.firstName || !formData.lastName)
+        return "الاسم بالكامل مطلوب";
+      if (!formData.username) return "اسم المستخدم مطلوب";
+      if (!formData.email) return "البريد الإلكتروني مطلوب";
+      if (!formData.password) return "كلمة المرور مطلوبة";
+      if (formData.password !== formData.password_confirmation) {
+        return "كلمات المرور غير متطابقة";
+      }
+      if (!formData.terms) return "يجب الموافقة على الشروط والأحكام";
+    }
+    return null;
+  };
 
-    if (formData.password !== formData.password_confirmation) {
-      setError("Passwords do not match.");
-      setLoading(false);
+  const nextStep = () => {
+    const errorMsg = validateStep(step);
+    if (errorMsg) {
+      setError(errorMsg);
+      return;
+    }
+    setStep((prev) => prev + 1);
+  };
+
+  const prevStep = () => {
+    setError("");
+    setStep((prev) => prev - 1);
+  };
+
+  const handleRegister = async () => {
+    const errorMsg = validateStep(3);
+    if (errorMsg) {
+      setError(errorMsg);
       return;
     }
 
-    if (!formData.terms) {
-      setError("You must agree to the Terms and Conditions.");
-      setLoading(false);
-      return;
-    }
-
+    setLoading(true);
     try {
-      // Mapping fields to backend expectation (currently support standard User fields)
-      // Note: Business details are not yet handled by backend, so we only send user data for now.
       const payload = {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         password: formData.password,
         password_confirmation: formData.password_confirmation,
+        // The backend currently might not accept extra fields, but we send them for completeness based on request
+        // Ideally backend should be updated to handle tenants/business setup
+        business_name: formData.businessName,
       };
 
-      const response = await api.post("/auth/register", payload);
-
-      // Redirect to login on success
+      await api.post("/auth/register", payload);
       router.push("/login?registered=true");
     } catch (err: any) {
       console.error(err);
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         setError(err.response.data.message);
-        if (err.response.data.errors) {
-          const firstError = Object.values(
-            err.response.data.errors
-          ).flat()[0] as string;
-          if (firstError) setError(firstError);
-        }
       } else {
-        setError("Registration failed. Please try again.");
+        setError("فشل التسجيل. يرجى المحاولة مرة أخرى.");
       }
     } finally {
       setLoading(false);
@@ -107,42 +146,135 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50/50 p-6 md:py-10">
-      <Card className="w-full max-w-2xl shadow-lg border-t-4 border-t-primary">
-        <CardHeader className="space-y-2 text-center">
-          <div className="flex justify-center mb-2">
-            <div className="bg-primary/10 text-primary font-bold text-xl px-4 py-2 rounded-lg">
-              EDOXO PRO
+    <div
+      className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4"
+      dir="rtl"
+    >
+      {/* Brand Header */}
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-primary tracking-tight">
+          EDOXO PRO
+        </h1>
+        <p className="text-gray-500 mt-2">نظام إدارة موارد المؤسسات المتكامل</p>
+      </div>
+
+      <Card className="w-full max-w-4xl shadow-xl border-none">
+        <CardHeader className="bg-white border-b pb-6">
+          <div className="flex items-center justify-between px-4">
+            <CardTitle className="text-2xl font-bold text-gray-800">
+              تسجيل نشاط جديد
+            </CardTitle>
+            <div className="text-sm text-gray-500">خطوة {step} من 3</div>
+          </div>
+
+          {/* Stepper */}
+          <div className="mt-8 flex items-center justify-center w-full">
+            <div className="flex items-center w-full max-w-2xl px-4 relative">
+              {/* Progress Bar Background */}
+              <div className="absolute top-5 left-0 w-full h-1 bg-gray-200 -z-0" />
+              {/* Active Progress Bar */}
+              <div
+                className="absolute top-5 right-0 h-1 bg-primary transition-all duration-300 z-0"
+                style={{
+                  width: step === 1 ? "16%" : step === 2 ? "50%" : "100%",
+                }} // Approximation for RTL
+              />
+
+              {/* Step 1 */}
+              <div className="flex-1 flex flex-col items-center relative z-10">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all bg-white",
+                    step >= 1
+                      ? "border-primary text-primary"
+                      : "border-gray-300 text-gray-400",
+                    step > 1 && "bg-primary text-white border-primary"
+                  )}
+                >
+                  {step > 1 ? <CheckCircle2 className="w-6 h-6" /> : "1"}
+                </div>
+                <span
+                  className={cn(
+                    "text-xs font-medium mt-2",
+                    step >= 1 ? "text-primary" : "text-gray-400"
+                  )}
+                >
+                  تفاصيل النشاط
+                </span>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex-1 flex flex-col items-center relative z-10">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all bg-white",
+                    step >= 2
+                      ? "border-primary text-primary"
+                      : "border-gray-300 text-gray-400",
+                    step > 2 && "bg-primary text-white border-primary"
+                  )}
+                >
+                  {step > 2 ? <CheckCircle2 className="w-6 h-6" /> : "2"}
+                </div>
+                <span
+                  className={cn(
+                    "text-xs font-medium mt-2",
+                    step >= 2 ? "text-primary" : "text-gray-400"
+                  )}
+                >
+                  الضرائب والإعدادات
+                </span>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex-1 flex flex-col items-center relative z-10">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all bg-white",
+                    step >= 3
+                      ? "border-primary text-primary"
+                      : "border-gray-300 text-gray-400"
+                  )}
+                >
+                  3
+                </div>
+                <span
+                  className={cn(
+                    "text-xs font-medium mt-2",
+                    step >= 3 ? "text-primary" : "text-gray-400"
+                  )}
+                >
+                  بيانات المالك
+                </span>
+              </div>
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold">
-            Register Business
-          </CardTitle>
-          <CardDescription className="text-lg">
-            Create a new account for your business
-          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleRegister} className="space-y-6">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
 
-            {/* --- Business Details Section --- */}
-            <div className="grid gap-6 md:grid-cols-2">
+        <CardContent className="p-8 pt-10 min-h-[400px]">
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* STEP 1: BUSINESS DETAILS */}
+          {step === 1 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-8 duration-300">
               <div className="space-y-2 col-span-2 md:col-span-1">
-                <Label htmlFor="businessName">Business Name</Label>
+                <Label htmlFor="businessName">
+                  اسم النشاط <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="businessName"
-                  placeholder="My Company LLC"
                   value={formData.businessName}
                   onChange={handleChange}
+                  placeholder="مثال: شركة النور للتجارة"
                 />
               </div>
+
               <div className="space-y-2 col-span-2 md:col-span-1">
-                <Label htmlFor="startDate">Start Date</Label>
+                <Label htmlFor="startDate">تاريخ البدء</Label>
                 <Input
                   id="startDate"
                   type="date"
@@ -150,75 +282,240 @@ export default function RegisterPage() {
                   onChange={handleChange}
                 />
               </div>
+
               <div className="space-y-2 col-span-2 md:col-span-1">
-                <Label>Currency</Label>
+                <Label>
+                  العملة <span className="text-red-500">*</span>
+                </Label>
                 <Select
+                  value={formData.currency}
                   onValueChange={(val) => handleSelectChange(val, "currency")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Currency" />
+                    <SelectValue placeholder="اختر العملة" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="USD">USD - US Dollar</SelectItem>
-                    <SelectItem value="EUR">EUR - Euro</SelectItem>
-                    <SelectItem value="SAR">SAR - Saudi Riyal</SelectItem>
-                    <SelectItem value="EGP">EGP - Egyptian Pound</SelectItem>
+                    <SelectItem value="EGP">جنيه مصري (EGP)</SelectItem>
+                    <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem>
+                    <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-2 col-span-2 md:col-span-1">
-                <Label htmlFor="logo">Business Logo</Label>
-                <Input id="logo" type="file" className="cursor-pointer" />
+                <Label htmlFor="logo">شعار النشاط</Label>
+                <Input
+                  id="logo"
+                  type="file"
+                  className="cursor-pointer file:text-primary file:bg-primary/10 file:rounded-md file:border-0 file:px-2 file:py-1"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="website">موقع الكتروني</Label>
+                <Input
+                  id="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mobile">رقم الموبايل</Label>
+                <Input
+                  id="mobile"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  placeholder="01xxxxxxxxx"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="country">الدولة</Label>
+                <Input
+                  id="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="city">المدينة</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                />
               </div>
             </div>
+          )}
 
-            <hr className="border-gray-100" />
+          {/* STEP 2: TAX & SETTINGS */}
+          {step === 2 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-8 duration-300">
+              <div className="col-span-2">
+                <h3 className="text-lg font-semibold mb-2 border-b pb-2 text-primary">
+                  البيانات الضريبية
+                </h3>
+              </div>
 
-            {/* --- User Details Section --- */}
-            <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
+                <Label htmlFor="taxName1">الاسم الضريبي 1</Label>
+                <Input
+                  id="taxName1"
+                  value={formData.taxName1}
+                  onChange={handleChange}
+                  placeholder="مثل: ضريبة القيمة المضافة"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="taxNumber1">الرقم الضريبي 1</Label>
+                <Input
+                  id="taxNumber1"
+                  value={formData.taxNumber1}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="taxName2">الاسم الضريبي 2</Label>
+                <Input
+                  id="taxName2"
+                  value={formData.taxName2}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="taxNumber2">الرقم الضريبي 2</Label>
+                <Input
+                  id="taxNumber2"
+                  value={formData.taxNumber2}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="col-span-2 mt-4">
+                <h3 className="text-lg font-semibold mb-2 border-b pb-2 text-primary">
+                  إعدادات النظام
+                </h3>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="fyStartDate">
+                  تاريخ بداية السنة المالية{" "}
+                  <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="fyStartDate"
+                  type="date"
+                  value={formData.fyStartDate}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>
+                  طريقة المحاسبة للمخزون <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.accountingMethod}
+                  onValueChange={(val) =>
+                    handleSelectChange(val, "accountingMethod")
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fifo">
+                      FIFO (ما يدخل أولاً يخرج أولاً)
+                    </SelectItem>
+                    <SelectItem value="lifo">
+                      LIFO (ما يدخل آخراً يخرج أولاً)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: OWNER DETAILS */}
+          {step === 3 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-8 duration-300">
+              <div className="space-y-2 md:col-span-1 col-span-2">
+                <Label htmlFor="prefix">اللقب</Label>
+                <Select
+                  value={formData.prefix}
+                  onValueChange={(val) => handleSelectChange(val, "prefix")}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="السيد / السيدة" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mr">السيد</SelectItem>
+                    <SelectItem value="mrs">السيدة</SelectItem>
+                    <SelectItem value="dr">دكتور</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="firstName">
+                  الاسم الأول <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="firstName"
-                  placeholder="John"
                   value={formData.firstName}
                   onChange={handleChange}
                   required
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
+                <Label htmlFor="lastName">
+                  الاسم الأخير <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="lastName"
-                  placeholder="Doe"
                   value={formData.lastName}
                   onChange={handleChange}
                   required
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">
+                  اسم المستخدم <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="username"
-                  placeholder="johndoe"
                   value={formData.username}
                   onChange={handleChange}
+                  placeholder="يستخدم في تسجيل الدخول"
                   required
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">
+                  البريد الإلكتروني <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="john@example.com"
                   value={formData.email}
                   onChange={handleChange}
                   required
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">
+                  كلمة المرور <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -227,8 +524,11 @@ export default function RegisterPage() {
                   required
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="password_confirmation">Confirm Password</Label>
+                <Label htmlFor="password_confirmation">
+                  تأكيد كلمة المرور <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="password_confirmation"
                   type="password"
@@ -237,51 +537,78 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-            </div>
 
-            <div className="flex items-center space-x-2 pt-2">
-              <Checkbox
-                id="terms"
-                checked={formData.terms}
-                onCheckedChange={(checked) =>
-                  handleCheckboxChange(checked as boolean)
-                }
-              />
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                I agree to the{" "}
-                <Link href="/terms" className="text-primary hover:underline">
-                  Terms and Conditions
-                </Link>
-              </label>
+              <div className="col-span-2 pt-4">
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Checkbox
+                    id="terms"
+                    checked={formData.terms}
+                    onCheckedChange={(c) => handleCheckboxChange(c as boolean)}
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="text-sm font-medium leading-none cursor-pointer"
+                  >
+                    أوافق على{" "}
+                    <Link href="#" className="text-primary underline">
+                      الشروط والأحكام
+                    </Link>
+                  </label>
+                </div>
+              </div>
             </div>
-
-            <Button
-              type="submit"
-              className="w-full text-lg py-6"
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              Register
-            </Button>
-          </form>
+          )}
         </CardContent>
-        <CardFooter className="justify-center border-t p-6">
-          <p className="text-muted-foreground">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="font-semibold text-primary hover:underline"
-            >
-              Sign in
-            </Link>
-          </p>
+
+        <CardFooter className="flex justify-between border-t p-6 bg-gray-50/50">
+          <div className="w-full flex justify-between gap-4">
+            {step > 1 ? (
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                disabled={loading}
+                className="w-32"
+              >
+                <ArrowRight className="ml-2 w-4 h-4" />
+                السابق
+              </Button>
+            ) : (
+              <div /> /* Spacer */
+            )}
+
+            {step < 3 ? (
+              <Button
+                onClick={nextStep}
+                className="w-32 bg-primary hover:bg-primary/90 text-white shadow-md transition-transform active:scale-95"
+              >
+                التالي
+                <ArrowLeft className="mr-2 w-4 h-4" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleRegister}
+                className="w-40 bg-green-600 hover:bg-green-700 text-white shadow-md transition-transform active:scale-95"
+                disabled={loading}
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin w-4 h-4 ml-2" />
+                ) : null}
+                تسجيل النشاط
+              </Button>
+            )}
+          </div>
         </CardFooter>
       </Card>
+
+      <div className="mt-8 text-center text-sm text-gray-500">
+        لديك حساب بالفعل؟{" "}
+        <Link
+          href="/login"
+          className="font-semibold text-primary hover:underline"
+        >
+          تسجيل الدخول
+        </Link>
+      </div>
     </div>
   );
 }
