@@ -201,10 +201,14 @@ export function Header({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => router.push("/profile")}
+            >
               <UserIcon className="ml-2 h-4 w-4" />
               <span>الملف الشخصي</span>
             </DropdownMenuItem>
+
             <DropdownMenuItem className="cursor-pointer">
               <Settings className="ml-2 h-4 w-4" />
               <span>الإعدادات</span>
