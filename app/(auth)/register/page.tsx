@@ -23,7 +23,26 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
+import {
+  Loader2,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  Building2,
+  Calendar,
+  Coins,
+  Globe,
+  Phone,
+  MapPin,
+  Flag,
+  FileText,
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Calculator,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
@@ -31,6 +50,11 @@ export default function RegisterPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Password Strength State
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   const [formData, setFormData] = useState({
     // Step 1: Business Details
@@ -63,8 +87,24 @@ export default function RegisterPage() {
     terms: false,
   });
 
+  const checkPasswordStrength = (pass: string) => {
+    let score = 0;
+    if (!pass) return 0;
+    if (pass.length > 6) score++;
+    if (pass.length > 10) score++;
+    if (/[A-Z]/.test(pass)) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+    return score; // Max 5
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+
+    if (id === "password") {
+      setPasswordStrength(checkPasswordStrength(value));
+    }
   };
 
   const handleSelectChange = (value: string, id: string) => {
@@ -126,9 +166,8 @@ export default function RegisterPage() {
         email: formData.email,
         password: formData.password,
         password_confirmation: formData.password_confirmation,
-        // The backend currently might not accept extra fields, but we send them for completeness based on request
-        // Ideally backend should be updated to handle tenants/business setup
         business_name: formData.businessName,
+        currency: formData.currency,
       };
 
       await api.post("/auth/register", payload);
@@ -144,6 +183,16 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  // Helper to render input with icon
+  const InputWithIcon = ({ icon: Icon, dir = "ltr", ...props }: any) => (
+    <div className="relative">
+      <div className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none">
+        <Icon className="w-4 h-4" />
+      </div>
+      <Input {...props} className={cn("pr-10 text-right", props.className)} />
+    </div>
+  );
 
   return (
     <div
@@ -181,7 +230,7 @@ export default function RegisterPage() {
               />
 
               {/* Step 1 */}
-              <div className="flex-1 flex flex-col items-center relative z-10">
+              <div className="flex-1 flex flex-col items-center relative z-10 text-center">
                 <div
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all bg-white",
@@ -204,7 +253,7 @@ export default function RegisterPage() {
               </div>
 
               {/* Step 2 */}
-              <div className="flex-1 flex flex-col items-center relative z-10">
+              <div className="flex-1 flex flex-col items-center relative z-10 text-center">
                 <div
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all bg-white",
@@ -227,7 +276,7 @@ export default function RegisterPage() {
               </div>
 
               {/* Step 3 */}
-              <div className="flex-1 flex flex-col items-center relative z-10">
+              <div className="flex-1 flex flex-col items-center relative z-10 text-center">
                 <div
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold transition-all bg-white",
@@ -251,7 +300,7 @@ export default function RegisterPage() {
           </div>
         </CardHeader>
 
-        <CardContent className="p-8 pt-10 min-h-[400px]">
+        <CardContent className="p-8 pt-10 min-h-[460px]">
           {error && (
             <Alert variant="destructive" className="mb-6">
               <AlertDescription>{error}</AlertDescription>
@@ -265,7 +314,8 @@ export default function RegisterPage() {
                 <Label htmlFor="businessName">
                   اسم النشاط <span className="text-red-500">*</span>
                 </Label>
-                <Input
+                <InputWithIcon
+                  icon={Building2}
                   id="businessName"
                   value={formData.businessName}
                   onChange={handleChange}
@@ -275,7 +325,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2 col-span-2 md:col-span-1">
                 <Label htmlFor="startDate">تاريخ البدء</Label>
-                <Input
+                <InputWithIcon
+                  icon={Calendar}
                   id="startDate"
                   type="date"
                   value={formData.startDate}
@@ -287,19 +338,24 @@ export default function RegisterPage() {
                 <Label>
                   العملة <span className="text-red-500">*</span>
                 </Label>
-                <Select
-                  value={formData.currency}
-                  onValueChange={(val) => handleSelectChange(val, "currency")}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر العملة" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="EGP">جنيه مصري (EGP)</SelectItem>
-                    <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem>
-                    <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <div className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none z-10">
+                    <Coins className="w-4 h-4" />
+                  </div>
+                  <Select
+                    value={formData.currency}
+                    onValueChange={(val) => handleSelectChange(val, "currency")}
+                  >
+                    <SelectTrigger className="pr-10 text-right">
+                      <SelectValue placeholder="اختر العملة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="EGP">جنيه مصري (EGP)</SelectItem>
+                      <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem>
+                      <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="space-y-2 col-span-2 md:col-span-1">
@@ -313,7 +369,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="website">موقع الكتروني</Label>
-                <Input
+                <InputWithIcon
+                  icon={Globe}
                   id="website"
                   value={formData.website}
                   onChange={handleChange}
@@ -323,7 +380,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="mobile">رقم الموبايل</Label>
-                <Input
+                <InputWithIcon
+                  icon={Phone}
                   id="mobile"
                   value={formData.mobile}
                   onChange={handleChange}
@@ -333,7 +391,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="country">الدولة</Label>
-                <Input
+                <InputWithIcon
+                  icon={Flag}
                   id="country"
                   value={formData.country}
                   onChange={handleChange}
@@ -342,7 +401,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="city">المدينة</Label>
-                <Input
+                <InputWithIcon
+                  icon={MapPin}
                   id="city"
                   value={formData.city}
                   onChange={handleChange}
@@ -355,14 +415,16 @@ export default function RegisterPage() {
           {step === 2 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-8 duration-300">
               <div className="col-span-2">
-                <h3 className="text-lg font-semibold mb-2 border-b pb-2 text-primary">
+                <h3 className="text-lg font-semibold mb-2 border-b pb-2 text-primary flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
                   البيانات الضريبية
                 </h3>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="taxName1">الاسم الضريبي 1</Label>
-                <Input
+                <InputWithIcon
+                  icon={FileText}
                   id="taxName1"
                   value={formData.taxName1}
                   onChange={handleChange}
@@ -372,7 +434,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="taxNumber1">الرقم الضريبي 1</Label>
-                <Input
+                <InputWithIcon
+                  icon={FileText}
                   id="taxNumber1"
                   value={formData.taxNumber1}
                   onChange={handleChange}
@@ -381,7 +444,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="taxName2">الاسم الضريبي 2</Label>
-                <Input
+                <InputWithIcon
+                  icon={FileText}
                   id="taxName2"
                   value={formData.taxName2}
                   onChange={handleChange}
@@ -390,7 +454,8 @@ export default function RegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="taxNumber2">الرقم الضريبي 2</Label>
-                <Input
+                <InputWithIcon
+                  icon={FileText}
                   id="taxNumber2"
                   value={formData.taxNumber2}
                   onChange={handleChange}
@@ -398,7 +463,8 @@ export default function RegisterPage() {
               </div>
 
               <div className="col-span-2 mt-4">
-                <h3 className="text-lg font-semibold mb-2 border-b pb-2 text-primary">
+                <h3 className="text-lg font-semibold mb-2 border-b pb-2 text-primary flex items-center gap-2">
+                  <Calculator className="w-5 h-5" />
                   إعدادات النظام
                 </h3>
               </div>
@@ -408,7 +474,8 @@ export default function RegisterPage() {
                   تاريخ بداية السنة المالية{" "}
                   <span className="text-red-500">*</span>
                 </Label>
-                <Input
+                <InputWithIcon
+                  icon={Calendar}
                   id="fyStartDate"
                   type="date"
                   value={formData.fyStartDate}
@@ -426,7 +493,7 @@ export default function RegisterPage() {
                     handleSelectChange(val, "accountingMethod")
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="text-right">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -451,7 +518,7 @@ export default function RegisterPage() {
                   value={formData.prefix}
                   onValueChange={(val) => handleSelectChange(val, "prefix")}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="text-right">
                     <SelectValue placeholder="السيد / السيدة" />
                   </SelectTrigger>
                   <SelectContent>
@@ -466,7 +533,8 @@ export default function RegisterPage() {
                 <Label htmlFor="firstName">
                   الاسم الأول <span className="text-red-500">*</span>
                 </Label>
-                <Input
+                <InputWithIcon
+                  icon={User}
                   id="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
@@ -478,7 +546,8 @@ export default function RegisterPage() {
                 <Label htmlFor="lastName">
                   الاسم الأخير <span className="text-red-500">*</span>
                 </Label>
-                <Input
+                <InputWithIcon
+                  icon={User}
                   id="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
@@ -490,7 +559,8 @@ export default function RegisterPage() {
                 <Label htmlFor="username">
                   اسم المستخدم <span className="text-red-500">*</span>
                 </Label>
-                <Input
+                <InputWithIcon
+                  icon={User}
                   id="username"
                   value={formData.username}
                   onChange={handleChange}
@@ -503,7 +573,8 @@ export default function RegisterPage() {
                 <Label htmlFor="email">
                   البريد الإلكتروني <span className="text-red-500">*</span>
                 </Label>
-                <Input
+                <InputWithIcon
+                  icon={Mail}
                   id="email"
                   type="email"
                   value={formData.email}
@@ -516,26 +587,99 @@ export default function RegisterPage() {
                 <Label htmlFor="password">
                   كلمة المرور <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="relative">
+                  <div className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="pr-10 pl-10 text-right" // Space for both icons
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none z-10"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Password Strength Indicator */}
+                {formData.password && (
+                  <div className="mt-2 space-y-1">
+                    <div className="flex gap-1 h-1">
+                      {[1, 2, 3, 4, 5].map((lvl) => (
+                        <div
+                          key={lvl}
+                          className={cn(
+                            "flex-1 rounded-full transition-all duration-300",
+                            passwordStrength >= lvl
+                              ? passwordStrength <= 2
+                                ? "bg-red-500"
+                                : passwordStrength <= 3
+                                ? "bg-yellow-500"
+                                : "bg-green-500"
+                              : "bg-gray-200"
+                          )}
+                        />
+                      ))}
+                    </div>
+                    <p
+                      className={cn(
+                        "text-xs text-right",
+                        passwordStrength <= 2
+                          ? "text-red-500"
+                          : passwordStrength <= 3
+                          ? "text-yellow-600"
+                          : "text-green-600"
+                      )}
+                    >
+                      {passwordStrength <= 2
+                        ? "ضعيفة"
+                        : passwordStrength <= 3
+                        ? "متوسطة"
+                        : "قوية"}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password_confirmation">
                   تأكيد كلمة المرور <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="password_confirmation"
-                  type="password"
-                  value={formData.password_confirmation}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="relative">
+                  <div className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <Input
+                    id="password_confirmation"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formData.password_confirmation}
+                    onChange={handleChange}
+                    className="pr-10 pl-10 text-right"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none z-10"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="col-span-2 pt-4">
