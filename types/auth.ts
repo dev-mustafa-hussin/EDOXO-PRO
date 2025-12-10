@@ -20,6 +20,9 @@ export interface User {
   username: string;
   role: UserRole;
   avatar?: string;
+  avatar_url?: string;
+  phone?: string;
+  job_title?: string;
   status: "active" | "inactive" | "suspended";
   createdAt: string;
   lastLogin?: string;

@@ -58,8 +58,44 @@ export default function ProfilePage() {
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [profitOpen, setProfitOpen] = useState(false);
 
+  // Permissions Logic
+  const [permissionsList, setPermissionsList] = useState([]);
+  const [permissionForm, setPermissionForm] = useState({
+    permission: "",
+    reason: "",
+  });
+  const [permissionSaving, setPermissionSaving] = useState(false);
+
+  const fetchPermissions = async () => {
+    try {
+      const res = await api.get("/permissions");
+      setPermissionsList(res.data);
+    } catch (error) {
+      console.error("Error fetching permissions", error);
+    }
+  };
+
+  const handlePermissionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!permissionForm.permission) return;
+
+    try {
+      setPermissionSaving(true);
+      const res = await api.post("/permissions", permissionForm);
+      setSuccess("تم إرسال طلب الصلاحية بنجاح");
+      setPermissionsList((prev): any => [...prev, res.data.request]);
+      setPermissionForm({ permission: "", reason: "" });
+    } catch (error) {
+      console.error(error);
+      setError("فشل إرسال الطلب");
+    } finally {
+      setPermissionSaving(false);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
+    fetchPermissions();
   }, []);
 
   const fetchProfile = async () => {
@@ -205,10 +241,11 @@ export default function ProfilePage() {
             </div>
 
             <Tabs defaultValue="personal" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+              <TabsList className="grid w-full grid-cols-4 lg:w-[500px]">
                 <TabsTrigger value="personal">البيانات الشخصية</TabsTrigger>
                 <TabsTrigger value="security">الأمان</TabsTrigger>
                 <TabsTrigger value="settings">الإعدادات</TabsTrigger>
+                <TabsTrigger value="permissions">الصلاحيات</TabsTrigger>
               </TabsList>
 
               {/* TAB 1: PERSONAL INFO */}
@@ -471,6 +508,120 @@ export default function ProfilePage() {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              {/* TAB 4: PERMISSIONS */}
+              <TabsContent value="permissions" className="mt-6">
+                <div className="grid gap-6">
+                  <Card className="border-none shadow-md">
+                    <CardHeader>
+                      <CardTitle>طلب صلاحية جديدة</CardTitle>
+                      <CardDescription>
+                        يمكنك طلب صلاحيات إضافية من مدير النظام.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <form
+                        onSubmit={handlePermissionSubmit}
+                        className="space-y-4"
+                      >
+                        <div className="space-y-2">
+                          <Label htmlFor="permission">
+                            اسم الصلاحية المطلوبة
+                          </Label>
+                          <Input
+                            id="permission"
+                            value={permissionForm.permission}
+                            onChange={(e) =>
+                              setPermissionForm({
+                                ...permissionForm,
+                                permission: e.target.value,
+                              })
+                            }
+                            placeholder="مثال: حذف فواتير, إضافة منتجات"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="reason">السبب</Label>
+                          <Input
+                            id="reason"
+                            value={permissionForm.reason}
+                            onChange={(e) =>
+                              setPermissionForm({
+                                ...permissionForm,
+                                reason: e.target.value,
+                              })
+                            }
+                            placeholder="لماذا تحتاج هذه الصلاحية؟"
+                          />
+                        </div>
+                        <div className="pt-2">
+                          <Button type="submit" disabled={permissionSaving}>
+                            {permissionSaving ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                              <Save className="mr-2 h-4 w-4" />
+                            )}
+                            إرسال الطلب
+                          </Button>
+                        </div>
+                      </form>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-none shadow-md">
+                    <CardHeader>
+                      <CardTitle>سجل الطلبات السابقة</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {permissionsList.length === 0 ? (
+                        <p className="text-center text-gray-500 py-4">
+                          لا توجد طلبات سابقة
+                        </p>
+                      ) : (
+                        <div className="space-y-4">
+                          {permissionsList.map((req: any) => (
+                            <div
+                              key={req.id}
+                              className="flex items-center justify-between p-4 border rounded-lg bg-white"
+                            >
+                              <div>
+                                <p className="font-semibold text-gray-800">
+                                  {req.permission}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  {req.reason}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {new Date(req.created_at).toLocaleDateString(
+                                    "ar-EG"
+                                  )}
+                                </p>
+                              </div>
+                              <div>
+                                <span
+                                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                    req.status === "approved"
+                                      ? "bg-green-100 text-green-700"
+                                      : req.status === "rejected"
+                                      ? "bg-red-100 text-red-700"
+                                      : "bg-yellow-100 text-yellow-700"
+                                  }`}
+                                >
+                                  {req.status === "approved"
+                                    ? "مقبول"
+                                    : req.status === "rejected"
+                                    ? "مرفوض"
+                                    : "قيد الانتظار"}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
