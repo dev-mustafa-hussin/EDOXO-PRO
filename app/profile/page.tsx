@@ -591,9 +591,12 @@ export default function ProfilePage() {
                                   {req.reason}
                                 </p>
                                 <p className="text-xs text-gray-400 mt-1">
-                                  {new Date(req.created_at).toLocaleDateString(
-                                    "ar-EG"
-                                  )}
+                                  {/* Use a simple persistent format or handle date on client to avoid mismatch */}
+                                  <span suppressHydrationWarning>
+                                    {new Date(
+                                      req.created_at
+                                    ).toLocaleDateString("ar-EG")}
+                                  </span>
                                 </p>
                               </div>
                               <div>
