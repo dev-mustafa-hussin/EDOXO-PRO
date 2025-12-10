@@ -45,6 +45,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Helper to render input with icon
+const InputWithIcon = ({ icon: Icon, dir = "ltr", ...props }: any) => (
+  <div className="relative">
+    <div className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none">
+      <Icon className="w-4 h-4" />
+    </div>
+    <Input {...props} className={cn("pr-10 text-right", props.className)} />
+  </div>
+);
+
 export default function RegisterPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -183,16 +193,6 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
-
-  // Helper to render input with icon
-  const InputWithIcon = ({ icon: Icon, dir = "ltr", ...props }: any) => (
-    <div className="relative">
-      <div className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none">
-        <Icon className="w-4 h-4" />
-      </div>
-      <Input {...props} className={cn("pr-10 text-right", props.className)} />
-    </div>
-  );
 
   return (
     <div
