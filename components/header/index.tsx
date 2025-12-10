@@ -1,9 +1,9 @@
 "use client";
 
 import { PanelRightClose } from "lucide-react";
-import { NotificationsMenu } from "./header/notifications-menu";
-import { UserMenu } from "./header/user-menu";
-import { GlobalTools } from "./header/global-tools";
+import { NotificationsMenu } from "./notifications-menu";
+import { UserMenu } from "./user-menu";
+import { GlobalTools } from "./global-tools";
 
 interface HeaderProps {
   onToggleSidebar: () => void;

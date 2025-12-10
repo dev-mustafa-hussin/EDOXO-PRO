@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
-import { menuItems } from "./sidebar/menu-config";
-import { SidebarItem } from "./sidebar/sidebar-item";
+import { menuItems } from "./menu-config";
+import { SidebarItem } from "./sidebar-item";
 
 interface SidebarProps {
   collapsed: boolean;
