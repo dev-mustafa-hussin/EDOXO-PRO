@@ -56,6 +56,7 @@ const InputWithIcon = ({ icon: Icon, dir = "ltr", ...props }: any) => (
 );
 
 export default function RegisterPage() {
+  // Environment variables refresh trigger
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
