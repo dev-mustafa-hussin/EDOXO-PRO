@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Calendar, Calculator, DollarSign } from "lucide-react";
 
 interface GlobalToolsProps {
@@ -32,8 +33,21 @@ export function GlobalTools({
 
       <div className="hidden lg:flex items-center gap-2 text-sm bg-blue-700 px-3 py-1 rounded border border-blue-600">
         <Calendar className="w-4 h-4" />
-        <span>{new Date().toLocaleDateString("en-GB")}</span>
+        <ClientDate />
       </div>
     </div>
   );
+}
+
+function ClientDate() {
+  const [date, setDate] = useState("");
+
+  useEffect(() => {
+    setDate(new Date().toLocaleDateString("en-GB"));
+  }, []);
+
+  if (!date)
+    return <span className="w-20 h-4 bg-blue-600/50 animate-pulse rounded" />;
+
+  return <span>{date}</span>;
 }

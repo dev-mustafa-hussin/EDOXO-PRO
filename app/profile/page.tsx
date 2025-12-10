@@ -341,7 +341,6 @@ export default function ProfilePage() {
                                   id="email"
                                   value={formData.email}
                                   onChange={handleChange}
-                                  className="pr-10"
                                   dir="ltr"
                                   className={cn("pr-10 text-right")}
                                 />
@@ -356,7 +355,6 @@ export default function ProfilePage() {
                                   id="phone"
                                   value={formData.phone}
                                   onChange={handleChange}
-                                  className="pr-10"
                                   placeholder="01xxxxxxxxx"
                                   dir="ltr"
                                   className={cn("pr-10 text-right")}
