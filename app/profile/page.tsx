@@ -528,22 +528,52 @@ export default function ProfilePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="flex items-center justify-between p-4 border rounded-lg bg-white">
+                    <div className="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
                       <div className="flex items-center gap-4">
-                        <div className="p-2 bg-blue-50 text-blue-600 rounded-full">
+                        <div className="p-2 bg-blue-50 text-blue-600 rounded-full dark:bg-blue-900/20 dark:text-blue-400">
                           <Globe className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="font-medium">لغة التطبيق</p>
-                          <p className="text-sm text-gray-500">
+                          <p className="font-medium dark:text-gray-200">
+                            لغة التطبيق
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
                             اختر اللغة المفضلة للواجهة
                           </p>
                         </div>
                       </div>
-                      <select className="border rounded-md px-3 py-1 text-sm bg-gray-50">
+                      <select className="border rounded-md px-3 py-1 text-sm bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300">
                         <option>العربية</option>
                         <option>English</option>
                       </select>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
+                      <div className="flex items-center gap-4">
+                        <div className="p-2 bg-purple-50 text-purple-600 rounded-full dark:bg-purple-900/20 dark:text-purple-400">
+                          {theme === "dark" ? (
+                            <Moon className="w-5 h-5" />
+                          ) : (
+                            <Sun className="w-5 h-5" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium dark:text-gray-200">
+                            المظهر
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            التبديل بين الوضع الليلي والنهاري
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2 space-x-reverse">
+                        <Switch
+                          checked={theme === "dark"}
+                          onCheckedChange={(checked) =>
+                            setTheme(checked ? "dark" : "light")
+                          }
+                        />
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between p-4 border rounded-lg bg-white">
@@ -564,6 +594,79 @@ export default function ProfilePage() {
                         </span>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* TAB 5: NOTIFICATIONS */}
+              <TabsContent value="notifications" className="mt-6">
+                <Card className="border-none shadow-md">
+                  <CardHeader>
+                    <CardTitle>الإشعارات</CardTitle>
+                    <CardDescription>
+                      آخر التحديثات والتنبيهات الخاصة بحسابك.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {notifications.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4 dark:bg-gray-800">
+                          <Bell className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <p className="text-gray-500 dark:text-gray-400">
+                          لا توجد إشعارات جديدة
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {notifications.map((notification: any) => (
+                          <div
+                            key={notification.id}
+                            className={cn(
+                              "flex items-start gap-4 p-4 rounded-lg border transition-colors",
+                              notification.read_at
+                                ? "bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700"
+                                : "bg-blue-50 border-blue-100 dark:bg-blue-900/10 dark:border-blue-800"
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                "p-2 rounded-full mt-1",
+                                notification.read_at
+                                  ? "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                                  : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                              )}
+                            >
+                              <Bell className="w-5 h-5" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-1">
+                                <h4
+                                  className={cn(
+                                    "font-medium",
+                                    notification.read_at
+                                      ? "text-gray-900 dark:text-gray-100"
+                                      : "text-blue-900 dark:text-blue-100"
+                                  )}
+                                >
+                                  {notification.data?.title || "إشعار جديد"}
+                                </h4>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  {new Date(
+                                    notification.created_at
+                                  ).toLocaleDateString("ar-EG")}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
+                                {notification.data?.message ||
+                                  notification.data?.body ||
+                                  "تفاصيل الإشعار..."}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
