@@ -37,8 +37,8 @@ import {
   Sun,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
+import { Switch } from "../../components/ui/switch";
+import { Separator } from "../../components/ui/separator";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
