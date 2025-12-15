@@ -82,8 +82,15 @@ export default function ProfilePage() {
     try {
       setPermissionSaving(true);
       const res = await api.post("/permissions", permissionForm);
+
+      if (res.data && Array.isArray(res.data.request)) {
+        // rare case if api returns { request: [...] }
+        setPermissionsList((prev): any => [...prev, ...res.data.request]);
+      } else if (res.data && res.data.request) {
+        setPermissionsList((prev): any => [...prev, res.data.request]);
+      }
+
       setSuccess("تم إرسال طلب الصلاحية بنجاح");
-      setPermissionsList((prev): any => [...prev, res.data.request]);
       setPermissionForm({ permission: "", reason: "" });
     } catch (error) {
       console.error(error);
@@ -578,46 +585,47 @@ export default function ProfilePage() {
                         </p>
                       ) : (
                         <div className="space-y-4">
-                          {permissionsList.map((req: any) => (
-                            <div
-                              key={req.id}
-                              className="flex items-center justify-between p-4 border rounded-lg bg-white"
-                            >
-                              <div>
-                                <p className="font-semibold text-gray-800">
-                                  {req.permission}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                  {req.reason}
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {/* Use a simple persistent format or handle date on client to avoid mismatch */}
-                                  <span suppressHydrationWarning>
-                                    {new Date(
-                                      req.created_at
-                                    ).toLocaleDateString("ar-EG")}
-                                  </span>
-                                </p>
-                              </div>
-                              <div>
-                                <span
-                                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                    req.status === "approved"
-                                      ? "bg-green-100 text-green-700"
+                          {Array.isArray(permissionsList) &&
+                            permissionsList.map((req: any) => (
+                              <div
+                                key={req.id || Math.random()}
+                                className="flex items-center justify-between p-4 border rounded-lg bg-white"
+                              >
+                                <div>
+                                  <p className="font-semibold text-gray-800">
+                                    {req.permission}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    {req.reason}
+                                  </p>
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    {/* Use a simple persistent format or handle date on client to avoid mismatch */}
+                                    <span suppressHydrationWarning>
+                                      {new Date(
+                                        req.created_at
+                                      ).toLocaleDateString("ar-EG")}
+                                    </span>
+                                  </p>
+                                </div>
+                                <div>
+                                  <span
+                                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                      req.status === "approved"
+                                        ? "bg-green-100 text-green-700"
+                                        : req.status === "rejected"
+                                        ? "bg-red-100 text-red-700"
+                                        : "bg-yellow-100 text-yellow-700"
+                                    }`}
+                                  >
+                                    {req.status === "approved"
+                                      ? "مقبول"
                                       : req.status === "rejected"
-                                      ? "bg-red-100 text-red-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                  }`}
-                                >
-                                  {req.status === "approved"
-                                    ? "مقبول"
-                                    : req.status === "rejected"
-                                    ? "مرفوض"
-                                    : "قيد الانتظار"}
-                                </span>
+                                      ? "مرفوض"
+                                      : "قيد الانتظار"}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
                         </div>
                       )}
                     </CardContent>
