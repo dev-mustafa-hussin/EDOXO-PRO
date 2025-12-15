@@ -20,8 +20,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
-  Loader2,
-  Save,
   User,
   Mail,
   Lock,
@@ -30,16 +28,28 @@ import {
   Camera,
   Globe,
   Bell,
+  Shield,
+  Settings,
+  Key,
+  Save,
+  Loader2,
+  Moon,
+  Sun,
 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [notifications, setNotifications] = useState([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -115,7 +125,19 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchProfile();
     fetchPermissions();
+    fetchNotifications();
   }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get("/notifications");
+      if (Array.isArray(res.data)) {
+        setNotifications(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch notifications", err);
+    }
+  };
 
   const fetchProfile = async () => {
     try {
@@ -265,6 +287,7 @@ export default function ProfilePage() {
                 <TabsTrigger value="personal">البيانات الشخصية</TabsTrigger>
                 <TabsTrigger value="security">الأمان</TabsTrigger>
                 <TabsTrigger value="settings">الإعدادات</TabsTrigger>
+                <TabsTrigger value="notifications">الإشعارات</TabsTrigger>
                 <TabsTrigger value="permissions">الصلاحيات</TabsTrigger>
               </TabsList>
 
