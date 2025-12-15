@@ -103,7 +103,7 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">اسم المستخدم أو البريد الإلكتروني</Label>
+              <Label htmlFor="email">البريد الإلكتروني</Label>
               <div className="relative">
                 <div className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none">
                   {email.includes("@") ? (

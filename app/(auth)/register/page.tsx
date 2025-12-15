@@ -91,7 +91,6 @@ export default function RegisterPage() {
     prefix: "",
     firstName: "",
     lastName: "",
-    username: "",
     email: "",
     password: "",
     password_confirmation: "",
@@ -138,7 +137,6 @@ export default function RegisterPage() {
     if (currentStep === 3) {
       if (!formData.firstName || !formData.lastName)
         return "الاسم بالكامل مطلوب";
-      if (!formData.username) return "اسم المستخدم مطلوب";
       if (!formData.email) return "البريد الإلكتروني مطلوب";
       if (!formData.password) return "كلمة المرور مطلوبة";
       if (formData.password !== formData.password_confirmation) {
@@ -556,19 +554,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="username">
-                  اسم المستخدم <span className="text-red-500">*</span>
-                </Label>
-                <InputWithIcon
-                  icon={User}
-                  id="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="يستخدم في تسجيل الدخول"
-                  required
-                />
-              </div>
+
 
               <div className="space-y-2">
                 <Label htmlFor="email">
