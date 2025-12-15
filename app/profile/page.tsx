@@ -47,12 +47,24 @@ export default function ProfilePage() {
     email: "",
     phone: "",
     job_title: "",
+    bio: "",
     current_password: "",
     password: "",
     password_confirmation: "",
     avatar: null as File | null,
     avatar_url: "",
   });
+
+  // ... inside fetchProfile ...
+  setFormData((prev) => ({
+    ...prev,
+    name: user.name || "",
+    email: user.email || "",
+    phone: user.phone || "",
+    job_title: user.job_title || "",
+    bio: user.bio || "",
+    avatar_url: user.avatar_url || "",
+  }));
 
   const [avatarPreview, setAvatarPreview] = useState("");
   const [calculatorOpen, setCalculatorOpen] = useState(false);
@@ -179,6 +191,7 @@ export default function ProfilePage() {
 
       if (formData.phone) data.append("phone", formData.phone);
       if (formData.job_title) data.append("job_title", formData.job_title);
+      if (formData.bio) data.append("bio", formData.bio);
 
       if (formData.password) {
         data.append("password", formData.password);
@@ -365,6 +378,23 @@ export default function ProfilePage() {
                                   placeholder="01xxxxxxxxx"
                                   dir="ltr"
                                   className={cn("pr-10 text-right")}
+                                />
+                              </div>
+                            </div>
+                            <div className="space-y-4">
+                              <Label htmlFor="bio">نبذة عني (Bio)</Label>
+                              <div className="relative">
+                                <textarea
+                                  id="bio"
+                                  value={formData.bio}
+                                  onChange={(e: any) =>
+                                    setFormData({
+                                      ...formData,
+                                      bio: e.target.value,
+                                    })
+                                  }
+                                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                  placeholder="اكتب نبذة مختصرة عنك..."
                                 />
                               </div>
                             </div>
