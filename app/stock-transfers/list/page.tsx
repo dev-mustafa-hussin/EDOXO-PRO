@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowRightLeft, FileText, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -35,27 +34,27 @@ export default function StockTransfersPage() {
     switch (status) {
       case "completed":
         return (
-          <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+          <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-green-100 text-green-700 hover:bg-green-100">
             مكتمل
-          </Badge>
+          </span>
         );
       case "pending":
         return (
-          <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
+          <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
             قيد الانتظار
-          </Badge>
+          </span>
         );
       case "sent":
         return (
-          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+          <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-blue-100 text-blue-700 hover:bg-blue-100">
             تم الإرسال
-          </Badge>
+          </span>
         );
       default:
         return (
-          <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">
+          <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-gray-100 text-gray-700 hover:bg-gray-100">
             {status}
-          </Badge>
+          </span>
         );
     }
   };
