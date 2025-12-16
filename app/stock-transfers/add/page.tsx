@@ -13,14 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Warehouse, WarehouseService } from "@/services/warehouse-service";
 import { StockTransferService } from "@/services/stock-transfer-service";
 import { useProductStore } from "@/store/product-store";
@@ -299,29 +291,38 @@ export default function AddStockTransferPage() {
 
                 {/* Items Table */}
                 <div className="border rounded-md bg-white overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>المنتج</TableHead>
-                        <TableHead className="w-32">الكمية</TableHead>
-                        <TableHead className="w-16"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                  <table className="w-full text-sm text-right">
+                    <thead className="bg-gray-50 border-b">
+                      <tr>
+                        <th className="h-12 px-4 text-right align-middle font-medium text-gray-500">
+                          المنتج
+                        </th>
+                        <th className="h-12 px-4 text-right align-middle font-medium text-gray-500 w-32">
+                          الكمية
+                        </th>
+                        <th className="h-12 px-4 text-right align-middle font-medium text-gray-500 w-16"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {fields.length === 0 ? (
-                        <TableRow>
-                          <TableCell
+                        <tr>
+                          <td
                             colSpan={3}
-                            className="text-center py-8 text-gray-500"
+                            className="p-4 text-center py-8 text-gray-500"
                           >
                             قم بإضافة منتجات
-                          </TableCell>
-                        </TableRow>
+                          </td>
+                        </tr>
                       ) : (
                         fields.map((field, index) => (
-                          <TableRow key={field.id}>
-                            <TableCell>{field.productName}</TableCell>
-                            <TableCell>
+                          <tr
+                            key={field.id}
+                            className="border-b transition-colors hover:bg-gray-50"
+                          >
+                            <td className="p-4 align-middle">
+                              {field.productName}
+                            </td>
+                            <td className="p-4 align-middle">
                               <Input
                                 type="number"
                                 min="1"
@@ -329,8 +330,8 @@ export default function AddStockTransferPage() {
                                   `items.${index}.quantity` as const
                                 )}
                               />
-                            </TableCell>
-                            <TableCell>
+                            </td>
+                            <td className="p-4 align-middle">
                               <Button
                                 type="button"
                                 variant="ghost"
@@ -340,12 +341,12 @@ export default function AddStockTransferPage() {
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
-                            </TableCell>
-                          </TableRow>
+                            </td>
+                          </tr>
                         ))
                       )}
-                    </TableBody>
-                  </Table>
+                    </tbody>
+                  </table>
                 </div>
                 {form.formState.errors.items && (
                   <p className="text-red-500 text-sm">
