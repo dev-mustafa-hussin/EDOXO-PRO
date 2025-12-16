@@ -16,16 +16,35 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { usePurchaseStore } from "@/store/purchase-store";
-import { Purchase } from "@/types/purchases";
+import { PurchaseService, Purchase } from "@/services/purchase-service";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function PurchasesListPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { purchases, fetchPurchases, isLoading } = usePurchaseStore();
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchPurchases = async () => {
+    try {
+      setIsLoading(true);
+      const data = await PurchaseService.getAll();
+      setPurchases(data);
+    } catch (error) {
+      console.error("Failed to fetch purchases:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل تحديث قائمة المشتريات",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchPurchases();
-  }, [fetchPurchases]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">

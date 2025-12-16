@@ -29,6 +29,7 @@ import { usePurchaseStore } from "@/store/purchase-store";
 import { useContactStore } from "@/store/contact-store";
 import { useProductStore } from "@/store/product-store";
 import { useToast } from "@/components/ui/use-toast";
+import { PurchaseService } from "@/services/purchase-service";
 
 // Schema Validation
 const purchaseItemSchema = z.object({
@@ -55,7 +56,7 @@ type PurchaseFormValues = z.infer<typeof purchaseSchema>;
 export default function AddPurchasePage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const router = useRouter();
-  // const { toast } = useToast();
+  const { toast } = useToast();
 
   const { addPurchase } = usePurchaseStore();
   const { contacts, fetchContacts, getContactsByType } = useContactStore();
@@ -105,46 +106,23 @@ export default function AddPurchasePage() {
 
   const onSubmit = async (data: PurchaseFormValues) => {
     try {
-      const supplier = suppliers.find((s) => s.id === data.supplierId);
+      await PurchaseService.create(data);
 
-      const purchaseData = {
-        id: crypto.randomUUID(),
-        referenceNumber: `PO-${Date.now()}`,
-        supplierId: data.supplierId,
-        supplierName: supplier?.name || "Unknown Supplier",
-        ...data,
-        items: data.items.map((item) => {
-          const product = products.find((p) => p.id === item.productId);
-          return {
-            id: crypto.randomUUID(),
-            productId: item.productId,
-            productName: product?.name || "Unknown Product",
-            quantity: item.quantity,
-            unitCost: item.unitCost,
-            subtotal: item.quantity * item.unitCost,
-            tax: item.tax,
-            total: item.quantity * item.unitCost + (item.tax || 0),
-          };
-        }),
-        subtotal,
-        taxTotal,
-        grandTotal,
-        dueAmount: grandTotal - data.paidAmount,
-        warehouseId: "WH-DEFAULT",
-        createdBy: "Admin",
-        createdAt: new Date().toISOString(),
-      };
-
-      await addPurchase(purchaseData);
-
-      // toast({
-      //   title: "تم إضافة المشتريات بنجاح",
-      //   description: `تم إنشاء الفاتورة رقم ${purchaseData.referenceNumber}`,
-      // });
+      toast({
+        title: "تم إضافة المشتريات بنجاح",
+        description: "تم حفظ الفاتورة في النظام",
+        className: "bg-green-500 text-white",
+      });
 
       router.push("/purchases/list");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting form:", error);
+      toast({
+        title: "خطأ في الإضافة",
+        description:
+          error.response?.data?.message || "حدث خطأ أثناء حفظ الفاتورة",
+        variant: "destructive",
+      });
     }
   };
 
