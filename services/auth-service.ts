@@ -30,10 +30,19 @@ export interface RegisterData {
 }
 
 export const AuthService = {
+  // Update Profile
+  updateProfile: async (data: any) => {
+    const response = await api.post<User>("/auth/profile", data);
+    if (response.data) {
+      localStorage.setItem("user", JSON.stringify(response.data));
+    }
+    return response.data;
+  },
+
   // Login
   login: async (credentials: LoginCredentials) => {
     // Backend expects 'email' and 'password'
-    const response = await api.post<AuthResponse>("/login", credentials);
+    const response = await api.post<AuthResponse>("/auth/login", credentials);
     if (response.data.access_token) {
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -43,7 +52,7 @@ export const AuthService = {
 
   // Register
   register: async (data: RegisterData) => {
-    const response = await api.post<AuthResponse>("/register", data);
+    const response = await api.post<AuthResponse>("/auth/register", data);
     if (response.data.access_token) {
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -54,7 +63,7 @@ export const AuthService = {
   // Logout
   logout: async () => {
     try {
-      await api.post("/logout");
+      await api.post("/auth/logout");
     } catch (error) {
       console.error("Logout failed", error);
     } finally {
@@ -66,7 +75,7 @@ export const AuthService = {
   // Get Current User (from API or LocalStorage)
   getCurrentUser: async () => {
     // If we need to verify token validity or get fresh data
-    const response = await api.get<User>("/user");
+    const response = await api.get<User>("/auth/user");
     return response.data;
   },
 
