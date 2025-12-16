@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -13,15 +13,56 @@ import {
   Download,
   Printer,
   Calendar,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import {
+  DamagedStockService,
+  DamagedStock,
+} from "@/services/damaged-stock-service";
+import { toast } from "sonner";
 
 export default function DamagedStockListPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [damagedStocks, setDamagedStocks] = useState<DamagedStock[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await DamagedStockService.getAll();
+      setDamagedStocks(data);
+    } catch (error) {
+      console.error("Failed to load damaged stocks", error);
+      toast.error("فشل تحميل قائمة التالف");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm("هل أنت متأكد من حذف هذا السجل؟")) {
+      try {
+        await DamagedStockService.delete(id);
+        toast.success("تم الحذف بنجاح");
+        loadData();
+      } catch (error) {
+        toast.error("فشل الحذف");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onOpenCalculator={() => {}}
+        onOpenProfit={() => {}}
+      />
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
@@ -84,20 +125,60 @@ export default function DamagedStockListPage() {
                 <thead className="bg-gray-50">
                   <tr className="border-b text-right">
                     <th className="p-3 font-medium text-gray-600">التاريخ</th>
+                    <th className="p-3 font-medium text-gray-600">المرجع</th>
                     <th className="p-3 font-medium text-gray-600">المنتج</th>
                     <th className="p-3 font-medium text-gray-600">الكمية</th>
                     <th className="p-3 font-medium text-gray-600">المستودع</th>
                     <th className="p-3 font-medium text-gray-600">السبب</th>
-                    <th className="p-3 font-medium text-gray-600">المسؤول</th>
                     <th className="p-3 font-medium text-gray-600">خيارات</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td colSpan={7} className="text-center py-8 text-gray-400">
-                      لا يوجد مخزون تالف مسجل
-                    </td>
-                  </tr>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-8">
+                        <Loader2 className="w-6 h-6 animate-spin text-blue-600 mx-auto" />
+                      </td>
+                    </tr>
+                  ) : damagedStocks.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={7}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        لا يوجد مخزون تالف مسجل
+                      </td>
+                    </tr>
+                  ) : (
+                    damagedStocks.map((item) => (
+                      <tr key={item.id} className="border-b hover:bg-gray-50">
+                        <td className="p-3">{item.date}</td>
+                        <td className="p-3 font-medium text-gray-600">
+                          {item.refNo}
+                        </td>
+                        <td className="p-3 font-medium">
+                          {item.productName || "-"}
+                        </td>
+                        <td className="p-3 font-bold text-red-600">
+                          {item.quantity}
+                        </td>
+                        <td className="p-3">{item.warehouseName || "-"}</td>
+                        <td className="p-3 text-gray-500">
+                          {item.reason || "-"}
+                        </td>
+                        <td className="p-3">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDelete(item.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
