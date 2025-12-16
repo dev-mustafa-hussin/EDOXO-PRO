@@ -27,7 +27,7 @@ export function Header({
           <PanelRightClose className="w-5 h-5" />
         </button>
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.5)]"></div>
+          <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
           <span className="text-lg font-bold tracking-tight">EDOXO PRO</span>
         </div>
       </div>
