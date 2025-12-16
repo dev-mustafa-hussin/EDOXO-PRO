@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import api from "@/lib/axios";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +18,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AuthService } from "@/services/auth-service";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,33 +40,24 @@ export default function LoginPage() {
     </div>
   );
 
+
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-        remember_me: rememberMe,
-      });
-
-      const token = response.data.access_token || response.data.token;
-
-      if (token) {
-        localStorage.setItem("token", token);
-        router.push("/"); // Redirect to dashboard
-      } else {
-        setError("فشل في استرداد رمز الدخول من الخادم.");
-      }
+      await AuthService.login({ email, password });
+      toast.success("تم تسجيل الدخول بنجاح");
+      router.push("/");
     } catch (err: any) {
       console.error(err);
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("بيانات الدخول غير صحيحة أو حدث خطأ في الخادم.");
-      }
+      const msg =
+        err.response?.data?.message ||
+        "بيانات الدخول غير صحيحة أو حدث خطأ في الخادم.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

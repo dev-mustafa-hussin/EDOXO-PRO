@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import api from "@/lib/axios";
+
+import { AuthService } from "@/services/auth-service";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -179,15 +181,15 @@ export default function RegisterPage() {
         currency: formData.currency,
       };
 
-      await api.post("/auth/register", payload);
+      await AuthService.register(payload);
+      toast.success("تم تسجيل الحساب بنجاح");
       router.push("/login?registered=true");
     } catch (err: any) {
       console.error(err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("فشل التسجيل. يرجى المحاولة مرة أخرى.");
-      }
+      const msg =
+        err.response?.data?.message || "فشل التسجيل. يرجى المحاولة مرة أخرى.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -553,8 +555,6 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-
-
 
               <div className="space-y-2">
                 <Label htmlFor="email">
