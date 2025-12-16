@@ -3,11 +3,8 @@
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/store/cart-store";
 import { useProductStore } from "@/store/product-store";
-import { useSaleStore } from "@/store/sale-store";
 import { useContactStore } from "@/store/contact-store";
 import { Product } from "@/types/products";
-import { Sale, SaleStatus } from "@/types/sales";
-import { PaymentStatus } from "@/types/finance";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,11 +15,11 @@ import {
   Minus,
   CreditCard,
   User,
-  LayoutGrid,
-  List,
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { SaleService } from "@/services/sale-service";
 
 export default function POSPage() {
   const router = useRouter();
@@ -35,7 +32,6 @@ export default function POSPage() {
     fetchProducts,
     isLoading: productsLoading,
   } = useProductStore();
-  const { addSale, isLoading: saleLoading } = useSaleStore();
   const { contacts, fetchContacts } = useContactStore();
 
   // Local State
@@ -66,43 +62,48 @@ export default function POSPage() {
     setIsProcessing(true);
 
     try {
-      const newSale: Sale = {
-        id: `SALE-${Date.now()}`, // Mock ID
-        invoiceNumber: `INV-${Date.now()}`,
-        customerId: cart.customer || "WALK-IN",
-        customerName: cart.customer
-          ? contacts.find((c) => c.id === cart.customer)?.name ||
-            "عميل غير معروف"
-          : "عميل نقدي",
+      const saleData = {
+        customerId: cart.customer || null, // null for Walk-in
         date: new Date().toISOString().split("T")[0],
         status: "completed",
-        paymentStatus: "paid", // Assuming immediate payment for POS
-        items: cart.items,
+        paymentStatus: "paid", // POS is usually immediate payment
+        paymentMethod: "cash", // Could add a selector for Card/Cash
         subtotal: cart.subtotal(),
         taxTotal: cart.taxTotal(),
         discountTotal: cart.discount,
         grandTotal: cart.grandTotal(),
         paidAmount: cart.grandTotal(),
-        dueAmount: 0,
-        createdBy: "Cashier",
-        createdAt: new Date().toISOString(),
+        notes: "POS Transaction",
+        items: cart.items.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+          unitPrice: item.price, // Selling Price
+          tax: 0, // Explicit tax per item if needed
+        })),
       };
 
-      await addSale(newSale); // This also updates inventory
+      const response = await SaleService.create(saleData);
+
       cart.clearCart();
 
       toast({
         title: "تمت العملية بنجاح",
-        description: `تم حفظ الفاتورة رقم ${newSale.invoiceNumber}`,
+        description: `تم حفظ الفاتورة رقم ${response.invoice_number}`,
         variant: "default",
+        className: "bg-green-600 text-white",
       });
 
-      // Redirect to invoice page for printing
-      router.push(`/sales/invoice/${newSale.id}`);
-    } catch (error) {
+      // Refresh products to update stock
+      fetchProducts();
+
+      // Redirect to invoice page for printing (optional, or show modal)
+      // router.push(`/sales/invoice/${response.id}`);
+    } catch (error: any) {
+      console.error("Sale Error:", error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء حفظ الفاتورة",
+        description:
+          error.response?.data?.message || "حدث خطأ أثناء حفظ الفاتورة",
         variant: "destructive",
       });
     } finally {
@@ -148,8 +149,9 @@ export default function POSPage() {
         {/* Grid */}
         <div className="flex-1 overflow-y-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 content-start pb-20">
           {productsLoading ? (
-            <div className="col-span-full text-center py-20 text-gray-500">
-              جاري تحميل المنتجات...
+            <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
+              <Loader2 className="w-8 h-8 animate-spin mb-2" />
+              <p>جاري تحميل المنتجات...</p>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="col-span-full text-center py-20 text-gray-500">
@@ -287,7 +289,7 @@ export default function POSPage() {
             disabled={cart.items.length === 0 || isProcessing}
           >
             {isProcessing ? (
-              "جاري المعالجة..."
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <span className="flex items-center gap-2">
                 <CreditCard className="w-6 h-6" />
