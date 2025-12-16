@@ -61,7 +61,11 @@ export default function StockTransfersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onOpenCalculator={() => {}}
+        onOpenProfit={() => {}}
+      />
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
@@ -128,8 +132,8 @@ export default function StockTransfersPage() {
                       >
                         <td className="p-3">{transfer.date}</td>
                         <td className="p-3 font-medium">{transfer.refNo}</td>
-                        <td className="p-3">{transfer.fromWarehouse?.name}</td>
-                        <td className="p-3">{transfer.toWarehouse?.name}</td>
+                        <td className="p-3">{transfer.fromWarehouseName}</td>
+                        <td className="p-3">{transfer.toWarehouseName}</td>
                         <td className="p-3">
                           {transfer.items?.length || 0} صنف
                         </td>
