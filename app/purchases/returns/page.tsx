@@ -1,21 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Undo2,
+  Plus,
   Search,
   Filter,
   Download,
   Printer,
   Calendar,
 } from "lucide-react";
+import Link from "next/link";
+import {
+  PurchaseReturnService,
+  PurchaseReturn,
+} from "@/services/purchase-return-service";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function PurchaseReturnsPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [returns, setReturns] = useState<PurchaseReturn[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchReturns = async () => {
+    try {
+      setIsLoading(true);
+      const data = await PurchaseReturnService.getAll();
+      setReturns(data);
+    } catch (error) {
+      console.error("Failed to fetch returns:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل تحديث قائمة المرتجعات",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReturns();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -48,6 +79,12 @@ export default function PurchaseReturnsPage() {
                   إدارة المرتجعات للموردين
                 </p>
               </div>
+              <Link href="/purchases/returns/add">
+                <Button className="bg-blue-600 hover:bg-blue-700 gap-2">
+                  <Plus className="w-4 h-4" />
+                  أضف مرتجع
+                </Button>
+              </Link>
             </div>
 
             <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
@@ -84,24 +121,97 @@ export default function PurchaseReturnsPage() {
                       رقم المرجع
                     </th>
                     <th className="p-3 font-medium text-gray-600">المورد</th>
-                    <th className="p-3 font-medium text-gray-600">الفرع</th>
                     <th className="p-3 font-medium text-gray-600">
-                      حالة الدفع
+                      حالة المرتجع
+                    </th>
+                    <th className="p-3 font-medium text-gray-600">
+                      حالة الاسترداد
                     </th>
                     <th className="p-3 font-medium text-gray-600">
                       المجموع الكلي
                     </th>
-                    <th className="p-3 font-medium text-gray-600">المدفوع</th>
-                    <th className="p-3 font-medium text-gray-600">المستحق</th>
+                    <th className="p-3 font-medium text-gray-600">المسترد</th>
+                    <th className="p-3 font-medium text-gray-600">المتبقي</th>
                     <th className="p-3 font-medium text-gray-600">خيارات</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td colSpan={9} className="text-center py-8 text-gray-400">
-                      لا توجد مرتجعات متاحة حاليا
-                    </td>
-                  </tr>
+                  {isLoading ? (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        جاري التحميل...
+                      </td>
+                    </tr>
+                  ) : returns.length > 0 ? (
+                    returns.map((ret) => (
+                      <tr
+                        key={ret.id}
+                        className="border-b hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="p-3 text-gray-600">{ret.date}</td>
+                        <td className="p-3 font-medium text-gray-900">
+                          {ret.referenceNumber}
+                        </td>
+                        <td className="p-3 text-gray-600">
+                          {ret.supplierName}
+                        </td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs
+                             ${
+                               ret.status === "completed"
+                                 ? "bg-green-100 text-green-700"
+                                 : "bg-yellow-100 text-yellow-700"
+                             }`}
+                          >
+                            {ret.status === "completed"
+                              ? "مكتمل"
+                              : "قيد المعالجة"}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs
+                             ${
+                               ret.paymentStatus === "paid"
+                                 ? "bg-green-100 text-green-700"
+                                 : ret.paymentStatus === "partial"
+                                 ? "bg-yellow-100 text-yellow-700"
+                                 : "bg-red-100 text-red-700"
+                             }`}
+                          >
+                            {ret.paymentStatus === "paid"
+                              ? "تم الاسترداد"
+                              : ret.paymentStatus === "partial"
+                              ? "جزئي"
+                              : "غير مسترد"}
+                          </span>
+                        </td>
+                        <td className="p-3 font-bold text-gray-800">
+                          {ret.grandTotal.toLocaleString()}
+                        </td>
+                        <td className="p-3 text-green-600">
+                          {ret.paidAmount.toLocaleString()}
+                        </td>
+                        <td className="p-3 text-red-600">
+                          {ret.dueAmount.toLocaleString()}
+                        </td>
+                        <td className="p-3">{/* Actions */}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        لا توجد مرتجعات متاحة حاليا
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
