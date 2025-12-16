@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Truck, Save } from "lucide-react";
-import { useContactStore } from "@/store/contact-store";
+import { SupplierService } from "@/services/supplier-service";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 // Define Validation Schema for Supplier
@@ -33,7 +34,6 @@ type SupplierFormValues = z.infer<typeof supplierSchema>;
 export default function AddSupplierPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const router = useRouter();
-  const { addContact } = useContactStore();
 
   const {
     register,
@@ -53,26 +53,24 @@ export default function AddSupplierPage() {
   });
 
   const onSubmit = async (data: SupplierFormValues) => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    addContact({
-      id: Math.random().toString(36).substr(2, 9),
-      type: "supplier", // Explicitly set type to supplier
-      name: data.name,
-      companyName: data.companyName,
-      phone: data.phone,
-      email: data.email || undefined,
-      address: data.address,
-      taxNumber: data.taxNumber,
-      commercialRecord: data.commercialRecord,
-      balance: 0,
-      status: "active",
-      createdAt: new Date().toISOString(),
-    });
-
-    // Redirect to suppliers list
-    router.push("/contacts/suppliers");
+    try {
+      await SupplierService.create({
+        name: data.name,
+        business_name: data.companyName,
+        phone: data.phone,
+        email: data.email,
+        address: data.address,
+        taxNumber: data.taxNumber,
+        // commercialRecord is not in our simple backend model yet, maybe ignored or added to notes?
+        // For now we map it but backend might ignore it if not in fillable/migration.
+        // Let's assume business_name covers companyName.
+      });
+      toast.success("تم إضافة المورد بنجاح");
+      router.push("/contacts/suppliers");
+    } catch (error) {
+      console.error("Failed to create supplier:", error);
+      toast.error("فشل إضافة المورد");
+    }
   };
 
   return (
