@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Users, Save } from "lucide-react";
-import { useContactStore } from "@/store/contact-store";
+import { CustomerService } from "@/services/customer-service";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 // Define Validation Schema
@@ -31,7 +32,6 @@ type CustomerFormValues = z.infer<typeof customerSchema>;
 export default function AddCustomerPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const router = useRouter();
-  const { addContact } = useContactStore();
 
   const {
     register,
@@ -49,27 +49,29 @@ export default function AddCustomerPage() {
   });
 
   const onSubmit = async (data: CustomerFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    addContact({
-      id: Math.random().toString(36).substr(2, 9),
-      type: "customer",
-      name: data.name,
-      phone: data.phone,
-      email: data.email || undefined,
-      address: data.address,
-      taxNumber: data.taxNumber,
-      balance: 0,
-      status: "active",
-      createdAt: new Date().toISOString(),
-    });
-
-    router.push("/contacts/customers");
+    try {
+      await CustomerService.create({
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        address: data.address,
+        taxNumber: data.taxNumber,
+      });
+      toast.success("تم إضافة العميل بنجاح");
+      router.push("/contacts/customers");
+    } catch (error) {
+      console.error("Failed to create customer:", error);
+      toast.error("فشل إضافة العميل");
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onOpenCalculator={() => {}}
+        onOpenProfit={() => {}}
+      />
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">

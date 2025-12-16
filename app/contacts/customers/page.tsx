@@ -19,8 +19,8 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
-import { useContactStore } from "@/store/contact-store";
-import { Contact } from "@/types/contacts";
+import { CustomerService, Customer } from "@/services/customer-service";
+import { toast } from "sonner";
 
 const columns = [
   { key: "action", label: "خيار", sortable: false },
@@ -63,22 +63,38 @@ export default function CustomersPage() {
   const [filterPreviousBalance, setFilterPreviousBalance] = useState(false);
   const [filterOpeningBalance, setFilterOpeningBalance] = useState(false);
 
-  // Store integration
-  const {
-    contacts,
-    fetchContacts,
-    deleteContact,
-    getContactsByType,
-    isLoading,
-  } = useContactStore();
+  // Local state for customers
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchCustomers = async () => {
+    setIsLoading(true);
+    try {
+      const data = await CustomerService.getAll();
+      setCustomers(data);
+    } catch (error) {
+      console.error(error);
+      toast.error("فشل في جلب بيانات العملاء");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("هل أنت متأكد من حذف هذا العميل؟")) return;
+    try {
+      await CustomerService.delete(id.toString());
+      toast.success("تم حذف العميل بنجاح");
+      fetchCustomers(); // Refresh list
+    } catch (error) {
+      console.error(error);
+      toast.error("فشل حذف العميل");
+    }
+  };
 
   useEffect(() => {
-    if (contacts.length === 0) {
-      fetchContacts();
-    }
-  }, [fetchContacts, contacts.length]);
-
-  const customers = getContactsByType("customer");
+    fetchCustomers();
+  }, []);
 
   const toggleColumnVisibility = (key: string) => {
     setVisibleColumns((prev) => ({
@@ -327,7 +343,7 @@ export default function CustomersPage() {
                       </td>
                     </tr>
                   ) : (
-                    customers.map((customer: Contact) => (
+                    customers.map((customer: Customer) => (
                       <tr
                         key={customer.id}
                         className="border-b border-gray-100 hover:bg-gray-50"
@@ -342,7 +358,7 @@ export default function CustomersPage() {
                                 <Pencil className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => deleteContact(customer.id)}
+                                onClick={() => handleDelete(customer.id)}
                                 className="p-1 text-red-600 hover:bg-red-50 rounded"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -352,7 +368,7 @@ export default function CustomersPage() {
                         )}
                         {visibleColumns.contactId && (
                           <td className="px-4 py-3 text-right">
-                            {customer.id.substring(0, 8)}
+                            {customer.id.toString()}
                           </td>
                         )}
                         {visibleColumns.name && (
@@ -362,7 +378,7 @@ export default function CustomersPage() {
                         )}
                         {visibleColumns.businessName && (
                           <td className="px-4 py-3 text-right">
-                            {customer.companyName || "-"}
+                            {customer.business_name || "-"}
                           </td>
                         )}
                         {visibleColumns.email && (
@@ -388,9 +404,11 @@ export default function CustomersPage() {
                         )}
                         {visibleColumns.addedOn && (
                           <td className="px-4 py-3 text-right">
-                            {new Date(customer.createdAt).toLocaleDateString(
-                              "ar-EG"
-                            )}
+                            {customer.created_at
+                              ? new Date(
+                                  customer.created_at
+                                ).toLocaleDateString("ar-EG")
+                              : "-"}
                           </td>
                         )}
                         {visibleColumns.address && (
