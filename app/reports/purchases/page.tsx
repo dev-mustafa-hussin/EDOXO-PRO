@@ -1,15 +1,9 @@
-```
 "use client";
 
 import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReportService } from "@/services/report-service";
 import { Loader2, TrendingUp, ShoppingCart, DollarSign } from "lucide-react";
 import {
@@ -54,7 +48,7 @@ export default function PurchasesReportPage() {
           </div>
 
           <h1 className="text-2xl font-bold text-gray-800 mb-6">
-             تقرير المشتريات (الشهر الحالي)
+            تقرير المشتريات (الشهر الحالي)
           </h1>
 
           {isLoading ? (
@@ -79,14 +73,16 @@ export default function PurchasesReportPage() {
                   </CardContent>
                 </Card>
                 <Card>
-                   <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium text-gray-500">
                       عدد الفواتير
                     </CardTitle>
                     <ShoppingCart className="w-4 h-4 text-blue-500" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{data.purchases_count}</div>
+                    <div className="text-2xl font-bold">
+                      {data.purchases_count}
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -110,11 +106,12 @@ export default function PurchasesReportPage() {
               </Card>
             </div>
           ) : (
-            <div className="text-center py-10 text-gray-500">لا توجد بيانات</div>
+            <div className="text-center py-10 text-gray-500">
+              لا توجد بيانات
+            </div>
           )}
         </main>
       </div>
     </div>
   );
 }
-```;
