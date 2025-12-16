@@ -19,8 +19,8 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
-import { useContactStore } from "@/store/contact-store";
-import { Contact } from "@/types/contacts";
+import { SupplierService, Supplier } from "@/services/supplier-service";
+import { toast } from "sonner";
 
 const columns = [
   { key: "action", label: "خيار", sortable: false },
@@ -66,21 +66,38 @@ export default function SuppliersPage() {
   const [filterAssignedTo, setFilterAssignedTo] = useState("لا احد");
 
   // Store integration
-  const {
-    contacts,
-    fetchContacts,
-    deleteContact,
-    getContactsByType,
-    isLoading,
-  } = useContactStore();
+  // Local state for suppliers
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchSuppliers = async () => {
+    setIsLoading(true);
+    try {
+      const data = await SupplierService.getAll();
+      setSuppliers(data);
+    } catch (error) {
+      console.error(error);
+      toast.error("فشل في جلب بيانات الموردين");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("هل أنت متأكد من حذف هذا المورد؟")) return;
+    try {
+      await SupplierService.delete(id.toString());
+      toast.success("تم حذف المورد بنجاح");
+      fetchSuppliers(); // Refresh list
+    } catch (error) {
+      console.error(error);
+      toast.error("فشل حذف المورد");
+    }
+  };
 
   useEffect(() => {
-    if (contacts.length === 0) {
-      fetchContacts();
-    }
-  }, [fetchContacts, contacts.length]);
-
-  const suppliers = getContactsByType("supplier");
+    fetchSuppliers();
+  }, []);
 
   const toggleColumnVisibility = (key: string) => {
     setVisibleColumns((prev) => ({
@@ -368,7 +385,7 @@ export default function SuppliersPage() {
                       </td>
                     </tr>
                   ) : (
-                    suppliers.map((supplier: Contact) => (
+                    suppliers.map((supplier: Supplier) => (
                       <tr
                         key={supplier.id}
                         className="border-b border-gray-100 hover:bg-gray-50"
@@ -383,7 +400,7 @@ export default function SuppliersPage() {
                                 <Pencil className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => deleteContact(supplier.id)}
+                                onClick={() => handleDelete(supplier.id)}
                                 className="p-1 text-red-600 hover:bg-red-50 rounded"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -393,7 +410,7 @@ export default function SuppliersPage() {
                         )}
                         {visibleColumns.contactId && (
                           <td className="px-4 py-3 text-right">
-                            {supplier.id.substring(0, 8)}
+                            {supplier.id.toString()}
                           </td>
                         )}
                         {visibleColumns.name && (
@@ -403,7 +420,7 @@ export default function SuppliersPage() {
                         )}
                         {visibleColumns.businessName && (
                           <td className="px-4 py-3 text-right">
-                            {supplier.companyName || "-"}
+                            {supplier.business_name || "-"}
                           </td>
                         )}
                         {visibleColumns.email && (
@@ -429,9 +446,7 @@ export default function SuppliersPage() {
                         )}
                         {visibleColumns.addedOn && (
                           <td className="px-4 py-3 text-right">
-                            {new Date(supplier.createdAt).toLocaleDateString(
-                              "ar-EG"
-                            )}
+                            {supplier.created_at ? new Date(supplier.created_at).toLocaleDateString("ar-EG") : "-"}
                           </td>
                         )}
                         {visibleColumns.address && (
