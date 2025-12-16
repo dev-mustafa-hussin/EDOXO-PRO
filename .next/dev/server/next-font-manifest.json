@@ -1,9 +1,6 @@
 {
   "app": {
-    "[project]/app/(auth)/login/page": [
-      "static/media/3fd1b3eda9c5392f-s.p.2ae7fa5d.woff2"
-    ],
-    "[project]/app/(auth)/register/page": [
+    "[project]/app/page": [
       "static/media/3fd1b3eda9c5392f-s.p.2ae7fa5d.woff2"
     ]
   },
