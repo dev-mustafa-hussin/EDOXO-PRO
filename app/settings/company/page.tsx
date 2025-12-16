@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useCompanyStore } from "@/store/company-store";
+import { SettingService } from "@/services/setting-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,7 +24,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Building2, Save } from "lucide-react";
+import { Building2, Save, Loader2 } from "lucide-react";
 
 const companySchema = z.object({
   name: z.string().min(2, "اسم الشركة مطلوب"),
@@ -43,26 +43,85 @@ const companySchema = z.object({
 type CompanyFormValues = z.infer<typeof companySchema>;
 
 export default function CompanySettingsPage() {
-  const { settings, updateSettings } = useCompanyStore();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companySchema),
-    defaultValues: settings,
+    defaultValues: {
+      name: "",
+      address: "",
+      phone: "",
+      email: "",
+      taxNumber: "",
+      logoUrl: "",
+      termsAndConditions: "",
+    },
   });
 
-  // Load settings into form when store (persistence) hydrates
   useEffect(() => {
-    form.reset(settings);
-  }, [settings, form]);
+    const loadSettings = async () => {
+      try {
+        const data = await SettingService.getSettings();
+        if (data) {
+          form.reset({
+            name: data.company_name || "",
+            address: data.company_address || "",
+            phone: data.company_phone || "",
+            email: data.company_email || "",
+            taxNumber: data.company_tax_number || "",
+            logoUrl: data.company_logo || "",
+            termsAndConditions: data.invoice_terms || "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load settings", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadSettings();
+  }, [form]);
 
-  const onSubmit = (data: CompanyFormValues) => {
-    updateSettings(data);
-    toast({
-      title: "تم الحفظ بنجاح",
-      description: "تم تحديث بيانات الشركة.",
-    });
+  const onSubmit = async (data: CompanyFormValues) => {
+    setIsSaving(true);
+    try {
+      // Map form values to backend keys
+      const settingsPayload = {
+        company_name: data.name,
+        company_address: data.address,
+        company_phone: data.phone,
+        company_email: data.email,
+        company_tax_number: data.taxNumber,
+        company_logo: data.logoUrl,
+        invoice_terms: data.termsAndConditions,
+      };
+
+      await SettingService.updateSettings(settingsPayload);
+
+      toast({
+        title: "تم الحفظ بنجاح",
+        description: "تم تحديث بيانات الشركة.",
+      });
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "فشل حفظ البيانات.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen" dir="rtl">
@@ -195,9 +254,23 @@ export default function CompanySettingsPage() {
                 />
 
                 <div className="flex justify-end pt-4">
-                  <Button type="submit" size="lg" className="w-full md:w-auto">
-                    <Save className="w-4 h-4 ml-2" />
-                    حفظ التغييرات
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full md:w-auto"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                        جاري الحفظ...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 ml-2" />
+                        حفظ التغييرات
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>
