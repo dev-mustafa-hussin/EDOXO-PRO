@@ -65,17 +65,6 @@ export default function ProfilePage() {
     avatar_url: "",
   });
 
-  // ... inside fetchProfile ...
-  setFormData((prev) => ({
-    ...prev,
-    name: user.name || "",
-    email: user.email || "",
-    phone: user.phone || "",
-    job_title: user.job_title || "",
-    bio: user.bio || "",
-    avatar_url: user.avatar_url || "",
-  }));
-
   const [avatarPreview, setAvatarPreview] = useState("");
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [profitOpen, setProfitOpen] = useState(false);
