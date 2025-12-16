@@ -17,19 +17,46 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
-import { useProductStore } from "@/store/product-store";
+import { ProductService } from "@/services/product-service";
+import { Product } from "@/types/products";
+import { toast } from "sonner"; // Using toast for notifications
 
 export default function ProductsListPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { products, fetchProducts, deleteProduct, isLoading } =
-    useProductStore();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch Products
+  const loadProducts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await ProductService.getAll();
+      setProducts(data);
+    } catch (error) {
+      console.error("Failed to fetch products", error);
+      toast.error("فشل تحميل المنتجات");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Only fetch if empty to persist added data during navigation session
-    if (products.length === 0) {
-      fetchProducts();
+    loadProducts();
+  }, []);
+
+  // Delete Product
+  const handleDelete = async (id: string) => {
+    if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
+
+    try {
+      await ProductService.delete(id);
+      toast.success("تم حذف المنتج بنجاح");
+      loadProducts(); // Refresh list
+    } catch (error) {
+      console.error("Failed to delete product", error);
+      toast.error("فشل حذف المنتج");
     }
-  }, [fetchProducts, products.length]);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -41,7 +68,9 @@ export default function ProductsListPage() {
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
+          {/* ... Header Sections ... */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            {/* Same Breadcrumbs */}
             <span>الرئيسية</span>
             <span>/</span>
             <span>المنتجات</span>
@@ -74,6 +103,7 @@ export default function ProductsListPage() {
               </Link>
             </div>
 
+            {/* ... Filters Toolbar (Keeping same static for now) ... */}
             <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" className="gap-2">
@@ -124,7 +154,7 @@ export default function ProductsListPage() {
                       </td>
                     </tr>
                   ) : products.length > 0 ? (
-                    products.map((product: any, index: number) => (
+                    products.map((product, index) => (
                       <tr
                         key={product.id}
                         className="border-b hover:bg-gray-50 transition-colors"
@@ -172,7 +202,7 @@ export default function ProductsListPage() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                              onClick={() => deleteProduct(product.id)}
+                              onClick={() => handleDelete(product.id)}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>

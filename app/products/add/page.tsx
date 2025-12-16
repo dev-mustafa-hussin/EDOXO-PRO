@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Box, Save } from "lucide-react";
-import { useProductStore } from "@/store/product-store";
 import { useRouter } from "next/navigation";
+import { ProductService } from "@/services/product-service";
+import { toast } from "sonner";
 
 // Define Validation Schema
 const productSchema = z.object({
@@ -35,7 +36,6 @@ type ProductFormValues = z.infer<typeof productSchema>;
 export default function AddProductPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const router = useRouter();
-  const { addProduct } = useProductStore();
 
   const {
     register,
@@ -49,33 +49,33 @@ export default function AddProductPage() {
       purchasePrice: "",
       sellingPrice: "",
       description: "",
+      // currentStock: 0, // backend uses 'stock', we map it in onSubmit
     },
   });
 
   const onSubmit = async (data: ProductFormValues) => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const payload = {
+        name: data.name,
+        sku: data.sku,
+        cost: Number(data.purchasePrice),
+        price: Number(data.sellingPrice),
+        description: data.description,
+        stock: 0,
+        category_id: null,
+      };
 
-    addProduct({
-      id: Math.random().toString(36).substr(2, 9),
-      name: data.name,
-      sku: data.sku,
-      purchasePrice: Number(data.purchasePrice),
-      sellingPrice: Number(data.sellingPrice),
-      description: data.description,
-      categoryId: "general", // Default for now
-      unitId: "pcs", // Default for now
-      taxRate: 0.15,
-      alertQuantity: 10,
-      currentStock: 0,
-      type: "standard",
-      hasVariants: false,
-      status: "active",
-      createdAt: new Date().toISOString(),
-    });
+      await ProductService.create(payload as any);
 
-    // Redirect to list
-    router.push("/products/list");
+      // We can use a simple alert for now if toast is complex to integrate without checking
+      toast.success("تم إنشاء المنتج بنجاح");
+      router.push("/products/list");
+    } catch (error) {
+      console.error("Failed to create product", error);
+      toast.error(
+        "فشل إنشاء المنتج. يرجى التأكد من تشغيل الخادم والاتصال بالإنترنت."
+      );
+    }
   };
 
   return (
