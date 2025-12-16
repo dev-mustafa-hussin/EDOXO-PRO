@@ -67,9 +67,26 @@ export default function AddSupplierPage() {
       });
       toast.success("تم إضافة المورد بنجاح");
       router.push("/contacts/suppliers");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create supplier:", error);
-      toast.error("فشل إضافة المورد");
+      if (error.response) {
+        // Handle Validation Errors
+        if (error.response.status === 422) {
+          const validationErrors = error.response.data.errors;
+          if (validationErrors) {
+            // Show the first validation error
+            const firstError = Object.values(validationErrors)[0] as string[];
+            toast.error(firstError[0] || "تأكد من صحة البيانات المدخلة");
+          } else {
+            toast.error(error.response.data.message || "بيانات غير صالحة");
+          }
+        } else {
+          // Handle other server errors
+          toast.error(error.response.data.message || "حدث خطأ في الخادم");
+        }
+      } else {
+        toast.error("فشل إضافة المورد. تأكد من الاتصال بالشبكة");
+      }
     }
   };
 
