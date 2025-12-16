@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -13,15 +13,54 @@ import {
   Download,
   Printer,
   Calendar,
+  Loader2,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
+import { ExpenseService, Expense } from "@/services/expense-service";
+import { toast } from "sonner";
 
 export default function ExpensesListPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadExpenses();
+  }, []);
+
+  const loadExpenses = async () => {
+    try {
+      setIsLoading(true);
+      const data = await ExpenseService.getAll();
+      setExpenses(data);
+    } catch (error) {
+      console.error("Failed to load expenses", error);
+      toast.error("فشل تحميل المصاريف");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm("هل أنت متأكد من حذف هذا المصروف؟")) {
+      try {
+        await ExpenseService.delete(id);
+        toast.success("تم حذف المصروف بنجاح");
+        loadExpenses();
+      } catch (error) {
+        toast.error("فشل حذف المصروف");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onOpenCalculator={() => {}}
+        onOpenProfit={() => {}}
+      />
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
@@ -99,11 +138,50 @@ export default function ExpensesListPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td colSpan={7} className="text-center py-8 text-gray-400">
-                      لا توجد مصاريف مسجلة
-                    </td>
-                  </tr>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-8">
+                        <div className="flex justify-center">
+                          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                        </div>
+                      </td>
+                    </tr>
+                  ) : expenses.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={7}
+                        className="text-center py-8 text-gray-400"
+                      >
+                        لا توجد مصاريف مسجلة
+                      </td>
+                    </tr>
+                  ) : (
+                    expenses.map((expense) => (
+                      <tr
+                        key={expense.id}
+                        className="border-b hover:bg-gray-50"
+                      >
+                        <td className="p-3">{expense.date}</td>
+                        <td className="p-3 font-medium">{expense.refNo}</td>
+                        <td className="p-3">{expense.categoryName || "-"}</td>
+                        <td className="p-3">{expense.warehouseName || "-"}</td>
+                        <td className="p-3 font-bold text-red-600">
+                          {Number(expense.amount).toLocaleString()}
+                        </td>
+                        <td className="p-3 text-gray-500">{expense.notes}</td>
+                        <td className="p-3">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDelete(expense.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
