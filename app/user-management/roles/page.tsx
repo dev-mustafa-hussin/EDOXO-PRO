@@ -1,12 +1,16 @@
-"use client"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Header } from "@/components/header"
-import { Sidebar } from "@/components/sidebar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Header } from "@/components/header";
+import { Sidebar } from "@/components/sidebar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -14,93 +18,138 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Plus, Download, FileSpreadsheet, Printer, Edit, Trash2, Search, ArrowUpDown, Shield } from "lucide-react"
-
-interface Role {
-  id: number
-  name: string
-  description: string
-}
+} from "@/components/ui/dialog";
+import {
+  Plus,
+  Download,
+  FileSpreadsheet,
+  Printer,
+  Edit,
+  Trash2,
+  Search,
+  ArrowUpDown,
+  Shield,
+  AlertTriangle,
+} from "lucide-react";
+import { RoleService, Role } from "@/services/role-service";
+import { toast } from "sonner";
 
 export default function RolesPage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [roles, setRoles] = useState<Role[]>([
-    { id: 1, name: "المدير", description: "صلاحيات كاملة للنظام" },
-    { id: 2, name: "الكاشير", description: "صلاحيات نقطة البيع فقط" },
-  ])
-  const [entriesPerPage, setEntriesPerPage] = useState("25")
-  const [searchTerm, setSearchTerm] = useState("")
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null)
-  const router = useRouter()
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [entriesPerPage, setEntriesPerPage] = useState("25");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    loadRoles();
+  }, []);
+
+  const loadRoles = async () => {
+    try {
+      setIsLoading(true);
+      const data = await RoleService.getAll();
+      setRoles(data);
+    } catch (error) {
+      console.error("Failed to fetch roles", error);
+      toast.error("فشل تحميل الصلاحيات");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDeleteClick = (role: Role) => {
-    setRoleToDelete(role)
-    setDeleteDialogOpen(true)
-  }
+    setRoleToDelete(role);
+    setDeleteDialogOpen(true);
+  };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (roleToDelete) {
-      setRoles(roles.filter((role) => role.id !== roleToDelete.id))
-      setRoleToDelete(null)
-      setDeleteDialogOpen(false)
+      try {
+        await RoleService.delete(roleToDelete.id);
+        toast.success("تم حذف الصلاحية بنجاح");
+        loadRoles();
+      } catch (error: any) {
+        if (error.response?.status === 403) {
+          toast.error("لا يمكن حذف هذه الصلاحية (محمية)");
+        } else {
+          toast.error("فشل حذف الصلاحية");
+        }
+      } finally {
+        setRoleToDelete(null);
+        setDeleteDialogOpen(false);
+      }
     }
-  }
+  };
 
   const handleEditRole = (roleId: number) => {
-    router.push(`/user-management/roles/edit/${roleId}`)
-  }
+    router.push(`/user-management/roles/edit/${roleId}`);
+  };
 
-  const filteredRoles = roles.filter(
-    (role) =>
-      role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      role.description.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredRoles = roles.filter((role) =>
+    role.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const exportToCSV = () => {
-    const headers = ["الصلاحيات", "الخيار"]
-    const csvContent = [headers.join(","), ...filteredRoles.map((role) => `"${role.name}","${role.description}"`)].join(
-      "\n",
-    )
+    const headers = ["الصلاحيات", "الخيار"];
+    const csvContent = [
+      headers.join(","),
+      ...filteredRoles.map(
+        (role) => `"${role.name}","${role.permissions.length} صلاحية"`
+      ),
+    ].join("\n");
 
-    const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" })
-    const link = document.createElement("a")
-    const url = URL.createObjectURL(blob)
-    link.setAttribute("href", url)
-    link.setAttribute("download", "roles.csv")
-    link.style.visibility = "hidden"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+    const blob = new Blob(["\ufeff" + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "roles.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const exportToExcel = () => {
-    const headers = ["الصلاحيات", "الخيار"]
+    const headers = ["الصلاحيات", "الخيار"];
     const tableContent = `
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
       <head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>الصلاحيات</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>
       <body>
         <table dir="rtl">
-          <thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+          <thead><tr>${headers
+            .map((h) => `<th>${h}</th>`)
+            .join("")}</tr></thead>
           <tbody>
-            ${filteredRoles.map((role) => `<tr><td>${role.name}</td><td>${role.description}</td></tr>`).join("")}
+            ${filteredRoles
+              .map(
+                (role) =>
+                  `<tr><td>${role.name}</td><td>${role.permissions.length} صلاحية</td></tr>`
+              )
+              .join("")}
           </tbody>
         </table>
       </body>
       </html>
-    `
+    `;
 
-    const blob = new Blob([tableContent], { type: "application/vnd.ms-excel;charset=utf-8;" })
-    const link = document.createElement("a")
-    const url = URL.createObjectURL(blob)
-    link.setAttribute("href", url)
-    link.setAttribute("download", "roles.xls")
-    link.style.visibility = "hidden"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+    const blob = new Blob([tableContent], {
+      type: "application/vnd.ms-excel;charset=utf-8;",
+    });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "roles.xls");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handlePrint = () => {
     const printContent = `
@@ -121,7 +170,9 @@ export default function RolesPage() {
       </head>
       <body>
         <h1>الصلاحيات</h1>
-        <p class="print-date">تاريخ الطباعة: ${new Date().toLocaleDateString("ar-EG")}</p>
+        <p class="print-date">تاريخ الطباعة: ${new Date().toLocaleDateString(
+          "ar-EG"
+        )}</p>
         <table>
           <thead>
             <tr>
@@ -130,24 +181,29 @@ export default function RolesPage() {
             </tr>
           </thead>
           <tbody>
-            ${filteredRoles.map((role) => `<tr><td>${role.name}</td><td>${role.description}</td></tr>`).join("")}
+            ${filteredRoles
+              .map(
+                (role) =>
+                  `<tr><td>${role.name}</td><td>${role.permissions.length} صلاحية</td></tr>`
+              )
+              .join("")}
           </tbody>
         </table>
       </body>
       </html>
-    `
+    `;
 
-    const printWindow = window.open("", "_blank")
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
-      printWindow.document.write(printContent)
-      printWindow.document.close()
-      printWindow.focus()
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.focus();
       setTimeout(() => {
-        printWindow.print()
-        printWindow.close()
-      }, 250)
+        printWindow.print();
+        printWindow.close();
+      }, 250);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
@@ -175,8 +231,12 @@ export default function RolesPage() {
             {/* Section Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-semibold text-gray-800">الصلاحيات</h2>
-                <p className="text-sm text-gray-500">إدارة صلاحيات المستخدمين</p>
+                <h2 className="text-lg font-semibold text-gray-800">
+                  الصلاحيات
+                </h2>
+                <p className="text-sm text-gray-500">
+                  إدارة صلاحيات المستخدمين
+                </p>
               </div>
               <Button
                 className="bg-blue-600 hover:bg-blue-700 gap-2"
@@ -189,22 +249,40 @@ export default function RolesPage() {
 
             <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="text-xs gap-1 bg-transparent" onClick={exportToCSV}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1 bg-transparent"
+                  onClick={exportToCSV}
+                >
                   <Download className="w-3 h-3" />
                   تصدير إلى CSV
                 </Button>
-                <Button variant="outline" size="sm" className="text-xs gap-1 bg-transparent" onClick={exportToExcel}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1 bg-transparent"
+                  onClick={exportToExcel}
+                >
                   <FileSpreadsheet className="w-3 h-3" />
                   تصدير إلى Excel
                 </Button>
-                <Button variant="outline" size="sm" className="text-xs gap-1 bg-transparent" onClick={handlePrint}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1 bg-transparent"
+                  onClick={handlePrint}
+                >
                   <Printer className="w-3 h-3" />
                   طباعة
                 </Button>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">عرض</span>
-                <Select value={entriesPerPage} onValueChange={setEntriesPerPage}>
+                <Select
+                  value={entriesPerPage}
+                  onValueChange={setEntriesPerPage}
+                >
                   <SelectTrigger className="w-20 text-xs">
                     <SelectValue />
                   </SelectTrigger>
@@ -259,9 +337,13 @@ export default function RolesPage() {
                     filteredRoles.map((role) => (
                       <tr key={role.id} className="border-b hover:bg-gray-50">
                         <td className="p-3">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">{role.name}</span>
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                            {role.name}
+                          </span>
                         </td>
-                        <td className="p-3 text-gray-700">{role.description}</td>
+                        <td className="p-3 text-gray-700">
+                          {role.permissions.length} صلاحية
+                        </td>
                         <td className="p-3">
                           <div className="flex items-center gap-1">
                             <Button
@@ -286,7 +368,10 @@ export default function RolesPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={3} className="text-center py-8 text-gray-400">
+                      <td
+                        colSpan={3}
+                        className="text-center py-8 text-gray-400"
+                      >
                         لا توجد بيانات متاحة فى الجدول
                       </td>
                     </tr>
@@ -297,12 +382,19 @@ export default function RolesPage() {
 
             <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
               <div className="flex gap-2">
-                <button className="px-3 py-1 border rounded hover:bg-gray-50">السابق</button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-                <button className="px-3 py-1 border rounded hover:bg-gray-50">التالى</button>
+                <button className="px-3 py-1 border rounded hover:bg-gray-50">
+                  السابق
+                </button>
+                <button className="px-3 py-1 bg-blue-600 text-white rounded">
+                  1
+                </button>
+                <button className="px-3 py-1 border rounded hover:bg-gray-50">
+                  التالى
+                </button>
               </div>
               <span>
-                عرض 1 إلى {filteredRoles.length} من {filteredRoles.length} إدخالات
+                عرض 1 إلى {filteredRoles.length} من {filteredRoles.length}{" "}
+                إدخالات
               </span>
             </div>
           </div>
@@ -314,20 +406,28 @@ export default function RolesPage() {
           <DialogHeader>
             <DialogTitle className="text-right">تأكيد الحذف</DialogTitle>
             <DialogDescription className="text-right">
-              هل أنت متأكد من حذف صلاحية "{roleToDelete?.name}"؟ لا يمكن التراجع عن هذا الإجراء.
+              هل أنت متأكد من حذف صلاحية "{roleToDelete?.name}"؟ لا يمكن التراجع
+              عن هذا الإجراء.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-2 sm:justify-start">
-            <Button variant="destructive" onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               <Trash2 className="w-4 h-4 ml-2" />
               نعم، احذف
             </Button>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+            >
               إلغاء
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
