@@ -52,7 +52,9 @@ const RoleBadge = ({ role }: { role: string }) => {
 
   const icons: Record<string, any> = {
     مدير: ShieldCheck,
+    Manager: ShieldCheck,
     كاشير: Store,
+    Cashier: Store,
     user: UserIcon,
   };
 
@@ -397,7 +399,7 @@ function UserForm({
     name: initialData?.name || "",
     email: initialData?.email || "",
     password: "",
-    role: initialData?.role || "كاشير",
+    role: initialData?.role || "Cashier",
   });
 
   const handleSubmit = () => {
@@ -485,7 +487,7 @@ function UserForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent dir="rtl">
-              <SelectItem value="مدير">
+              <SelectItem value="Manager">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-rose-500" />
                   <span>مدير النظام</span>
@@ -494,7 +496,7 @@ function UserForm({
                   </span>
                 </div>
               </SelectItem>
-              <SelectItem value="كاشير">
+              <SelectItem value="Cashier">
                 <div className="flex items-center gap-2">
                   <Store className="w-4 h-4 text-emerald-500" />
                   <span>كاشير / بائع</span>
