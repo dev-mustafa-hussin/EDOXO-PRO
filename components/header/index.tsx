@@ -7,14 +7,14 @@ import { GlobalTools } from "./global-tools";
 
 interface HeaderProps {
   onToggleSidebar: () => void;
-  onOpenCalculator: () => void;
-  onOpenProfit: () => void;
+  onOpenCalculator?: () => void;
+  onOpenProfit?: () => void;
 }
 
 export function Header({
   onToggleSidebar,
-  onOpenCalculator,
-  onOpenProfit,
+  onOpenCalculator = () => {},
+  onOpenProfit = () => {},
 }: HeaderProps) {
   return (
     <header className="bg-primary text-primary-foreground h-14 flex items-center justify-between px-4 sticky top-0 z-50 shadow-md border-b">
