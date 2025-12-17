@@ -341,6 +341,10 @@ export default function UsersPage() {
                         <td className="p-3">{user.email}</td>
                         <td className="p-3">
                           <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-blue-600 hover:bg-blue-50"
                               onClick={() => openEditDialog(user)}
                             >
                               <Edit className="w-3.5 h-3.5" />
