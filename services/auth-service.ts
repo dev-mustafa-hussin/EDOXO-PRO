@@ -72,15 +72,25 @@ export const AuthService = {
 
   // Logout
   logout: async () => {
+    // Call API to invalidate token (optional, based on backend)
     try {
       await api.post("/auth/logout");
-    } catch (error) {
-      console.error("Logout failed", error);
-    } finally {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("permissions");
+    } catch (e) {
+      console.error("Logout failed", e);
     }
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("permissions");
+  },
+
+  forgotPassword: async (email: string) => {
+    const response = await api.post("/auth/forgot-password", { email });
+    return response.data;
+  },
+
+  resetPassword: async (data: any) => {
+    const response = await api.post("/auth/reset-password", data);
+    return response.data;
   },
 
   // Get Current User (from API or LocalStorage)
