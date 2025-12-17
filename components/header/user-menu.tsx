@@ -29,7 +29,7 @@ export function UserMenu() {
         }
 
         const response = await api.get("/auth/user");
-        setUser(response.data);
+        setUser(response.data.user);
       } catch (error: any) {
         console.error("Failed to fetch user", error);
         if (
