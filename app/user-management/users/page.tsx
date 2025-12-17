@@ -46,10 +46,117 @@ export default function UsersPage() {
     role: "كاشير",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
   useEffect(() => {
     loadUsers();
   }, []);
+
+  const handleUpdateUser = async (data: any) => {
+    if (!editingUser) return;
+    try {
+      setIsSubmitting(true);
+      await UserService.update(editingUser.id, data);
+      toast.success("تم تحديث بيانات المستخدم");
+      setIsEditDialogOpen(false);
+      setEditingUser(null);
+      loadUsers();
+    } catch (error) {
+      toast.error("فشل تحديث البيانات");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openEditDialog = (user: User) => {
+    setEditingUser(user);
+    setIsEditDialogOpen(true);
+  };
+
+  function UserForm({
+    initialData,
+    onSubmit,
+    isSubmitting,
+    isEdit = false,
+  }: any) {
+    const [formData, setFormData] = useState({
+      name: initialData?.name || "",
+      email: initialData?.email || "",
+      password: "",
+      role: initialData?.role || "كاشير",
+    });
+
+    const handleSubmit = () => {
+      if (!formData.name || !formData.email) {
+        toast.error("يرجى ملء الحقول الأساسية");
+        return;
+      }
+      onSubmit(formData);
+    };
+
+    return (
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <Label>الإسم</Label>
+          <Input
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder="الإسم الكامل"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>البريد الإلكتروني</Label>
+          <Input
+            type="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            placeholder="البريد الإلكتروني"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>
+            كلمة المرور {isEdit && "(اتركها فارغة إذا لم تود تغييرها)"}
+          </Label>
+          <Input
+            type="password"
+            value={formData.password}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+            placeholder="كلمة المرور"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>الصلاحية</Label>
+          <Select
+            value={formData.role}
+            onValueChange={(value) => setFormData({ ...formData, role: value })}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="مدير">مدير</SelectItem>
+              <SelectItem value="كاشير">كاشير</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <Button
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="w-full bg-blue-600 hover:bg-blue-700"
+        >
+          {isSubmitting ? (
+            <Loader2 className="w-4 h-4 animate-spin ml-2" />
+          ) : null}
+          {isEdit ? "حفظ التغييرات" : "إضافة المستخدم"}
+        </Button>
+      </div>
+    );
+  }
 
   const loadUsers = async () => {
     try {
@@ -149,67 +256,27 @@ export default function UsersPage() {
                   <DialogHeader>
                     <DialogTitle>إضافة مستخدم جديد</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label>الإسم</Label>
-                      <Input
-                        value={newUser.name}
-                        onChange={(e) =>
-                          setNewUser({ ...newUser, name: e.target.value })
-                        }
-                        placeholder="الإسم الكامل"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>البريد الإلكتروني</Label>
-                      <Input
-                        type="email"
-                        value={newUser.email}
-                        onChange={(e) =>
-                          setNewUser({ ...newUser, email: e.target.value })
-                        }
-                        placeholder="البريد الإلكتروني"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>كلمة المرور</Label>
-                      <Input
-                        type="password"
-                        value={newUser.password}
-                        onChange={(e) =>
-                          setNewUser({ ...newUser, password: e.target.value })
-                        }
-                        placeholder="كلمة المرور"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>الصلاحية</Label>
-                      <Select
-                        value={newUser.role}
-                        onValueChange={(value) =>
-                          setNewUser({ ...newUser, role: value })
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="مدير">مدير</SelectItem>
-                          <SelectItem value="كاشير">كاشير</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button
-                      onClick={handleAddUser}
-                      disabled={isSubmitting}
-                      className="w-full bg-blue-600 hover:bg-blue-700"
-                    >
-                      {isSubmitting ? (
-                        <Loader2 className="w-4 h-4 animate-spin ml-2" />
-                      ) : null}
-                      إضافة المستخدم
-                    </Button>
-                  </div>
+                  <UserForm
+                    onSubmit={handleAddUser}
+                    isSubmitting={isSubmitting}
+                  />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={isEditDialogOpen}
+                onOpenChange={setIsEditDialogOpen}
+              >
+                <DialogContent className="sm:max-w-md" dir="rtl">
+                  <DialogHeader>
+                    <DialogTitle>تعديل بيانات المستخدم</DialogTitle>
+                  </DialogHeader>
+                  <UserForm
+                    initialData={editingUser}
+                    onSubmit={handleUpdateUser}
+                    isSubmitting={isSubmitting}
+                    isEdit
+                  />
                 </DialogContent>
               </Dialog>
             </div>
@@ -274,10 +341,7 @@ export default function UsersPage() {
                         <td className="p-3">{user.email}</td>
                         <td className="p-3">
                           <div className="flex items-center gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 w-7 p-0 text-blue-600 hover:bg-blue-50"
+                              onClick={() => openEditDialog(user)}
                             >
                               <Edit className="w-3.5 h-3.5" />
                             </Button>
