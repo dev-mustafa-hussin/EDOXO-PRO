@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { useAuthStore } from "@/store/auth-store";
+import { usePermission } from "@/hooks/use-permission";
 import { menuItems } from "./menu-config";
 import { SidebarItem } from "./sidebar-item";
 
@@ -12,14 +12,14 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const pathname = usePathname();
-  const { user } = useAuthStore();
+  const { hasRole, role } = usePermission(); // Use the hook instead of raw store
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
     "إدارة المستخدمين": pathname?.startsWith("/user-management") || false,
   });
 
   const filteredItems = menuItems.filter(
     (item) =>
-      !item.allowedRoles || (user && item.allowedRoles.includes(user.role))
+      !item.allowedRoles || (role && item.allowedRoles.includes(role as any))
   );
 
   const toggleDropdown = (label: string) => {

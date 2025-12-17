@@ -42,10 +42,20 @@ export const AuthService = {
   // Login
   login: async (credentials: LoginCredentials) => {
     // Backend expects 'email' and 'password'
-    const response = await api.post<AuthResponse>("/auth/login", credentials);
+    const response = await api.post<AuthResponse & { permissions: string[] }>(
+      "/auth/login",
+      credentials
+    );
     if (response.data.access_token) {
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
+      // Store permissions
+      if (response.data.permissions) {
+        localStorage.setItem(
+          "permissions",
+          JSON.stringify(response.data.permissions)
+        );
+      }
     }
     return response.data;
   },
@@ -69,6 +79,7 @@ export const AuthService = {
     } finally {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("permissions");
     }
   },
 
