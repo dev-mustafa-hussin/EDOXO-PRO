@@ -1,275 +1,147 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
-import { Header } from "@/components/header"
-import { Sidebar } from "@/components/sidebar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Shield, Save, ArrowRight } from "lucide-react"
-
-interface PermissionSection {
-  id: string
-  title: string
-  permissions: {
-    id: string
-    label: string
-    checked: boolean
-  }[]
-}
-
-// Mock data for roles
-const mockRoles: { [key: number]: { name: string; permissions: string[] } } = {
-  1: {
-    name: "المدير",
-    permissions: [
-      "user_view",
-      "user_add",
-      "user_edit",
-      "user_delete",
-      "roles_view",
-      "roles_add",
-      "roles_edit",
-      "roles_delete",
-      "supplier_view_all",
-      "supplier_add",
-      "supplier_edit",
-      "supplier_delete",
-      "customer_view_all",
-      "customer_add",
-      "customer_edit",
-      "customer_delete",
-      "product_view",
-      "product_add",
-      "product_edit",
-      "product_delete",
-      "purchases_view_all",
-      "purchases_add",
-      "purchases_edit",
-      "purchases_delete",
-      "sales_view_all",
-      "sales_add",
-      "sales_update",
-      "sales_delete",
-      "pos_view",
-      "pos_add",
-      "pos_edit",
-      "pos_delete",
-      "reports_purchase_sales",
-      "reports_profit_loss",
-      "reports_stock",
-      "settings_business",
-      "settings_invoice",
-      "home_view",
-      "others_export",
-    ],
-  },
-  2: {
-    name: "الكاشير",
-    permissions: [
-      "pos_view",
-      "pos_add",
-      "pos_print_invoice",
-      "sales_view_own",
-      "sales_add",
-      "customer_view_all",
-      "product_view",
-    ],
-  },
-}
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Header } from "@/components/header";
+import { Sidebar } from "@/components/sidebar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Shield, Save, ArrowRight } from "lucide-react";
+import { RoleService } from "@/services/role-service";
+import { toast } from "sonner";
 
 export default function EditRolePage() {
-  const router = useRouter()
-  const params = useParams()
-  const roleId = Number(params.id)
+  const router = useRouter();
+  const params = useParams();
+  const roleId = Number(params.id);
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [roleName, setRoleName] = useState("")
-  const [loading, setLoading] = useState(true)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [roleName, setRoleName] = useState("");
+  const [permissions, setPermissions] = useState<any[]>([]);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const [permissionSections, setPermissionSections] = useState<PermissionSection[]>([
-    {
-      id: "others",
-      title: "آخرون",
-      permissions: [
-        {
-          id: "others_export",
-          label: "عرض التصدير إلى الأزرار (csv / excel / print / pdf) على الجداول",
-          checked: false,
-        },
-      ],
-    },
-    {
-      id: "user",
-      title: "المستخدم",
-      permissions: [
-        { id: "user_view", label: "عرض المستخدم", checked: false },
-        { id: "user_add", label: "إضافة مستخدم", checked: false },
-        { id: "user_edit", label: "تعديل المستخدم", checked: false },
-        { id: "user_delete", label: "حذف المستخدم", checked: false },
-      ],
-    },
-    {
-      id: "roles",
-      title: "الصلاحيات",
-      permissions: [
-        { id: "roles_view", label: "عرض الصلاحية", checked: false },
-        { id: "roles_add", label: "إضافة دور", checked: false },
-        { id: "roles_edit", label: "تعديل الدور", checked: false },
-        { id: "roles_delete", label: "حذف الصلاحية", checked: false },
-      ],
-    },
-    {
-      id: "supplier",
-      title: "المورد",
-      permissions: [
-        { id: "supplier_view_all", label: "عرض كل الموردين", checked: false },
-        { id: "supplier_view_own", label: "عرض المورد الخاص", checked: false },
-        { id: "supplier_add", label: "إضافة مورد", checked: false },
-        { id: "supplier_edit", label: "تعديل المورد", checked: false },
-        { id: "supplier_delete", label: "حذف المورد", checked: false },
-      ],
-    },
-    {
-      id: "customer",
-      title: "العميل",
-      permissions: [
-        { id: "customer_view_all", label: "عرض كل العملاء", checked: false },
-        { id: "customer_view_own", label: "عرض العميل الخاص", checked: false },
-        { id: "customer_add", label: "إضافة عميل", checked: false },
-        { id: "customer_edit", label: "تعديل العميل", checked: false },
-        { id: "customer_delete", label: "حذف العميل", checked: false },
-      ],
-    },
-    {
-      id: "product",
-      title: "المنتج",
-      permissions: [
-        { id: "product_view", label: "عرض المنتج", checked: false },
-        { id: "product_add", label: "إضافة منتج", checked: false },
-        { id: "product_edit", label: "تعديل المنتج", checked: false },
-        { id: "product_delete", label: "حذف المنتج", checked: false },
-        { id: "product_opening_stock", label: "أضف مخزون الإفتتاح", checked: false },
-        { id: "product_view_purchase_price", label: "عرض سعر الشراء", checked: false },
-      ],
-    },
-    {
-      id: "purchases",
-      title: "المشتريات",
-      permissions: [
-        { id: "purchases_view_all", label: "عرض كل عمليات الشراء", checked: false },
-        { id: "purchases_view_own", label: "عرض الشراء الخاص فقط", checked: false },
-        { id: "purchases_add", label: "إضافة عملية شراء", checked: false },
-        { id: "purchases_edit", label: "تعديل عملية شراء", checked: false },
-        { id: "purchases_delete", label: "حذف عملية شراء", checked: false },
-      ],
-    },
-    {
-      id: "sales",
-      title: "المبيعات",
-      permissions: [
-        { id: "sales_view_all", label: "عرض كل عمليات البيع", checked: false },
-        { id: "sales_view_own", label: "عرض بيع الخاصة فقط", checked: false },
-        { id: "sales_add", label: "إضافة بيع", checked: false },
-        { id: "sales_update", label: "تحديث البيع", checked: false },
-        { id: "sales_delete", label: "حذف البيع", checked: false },
-      ],
-    },
-    {
-      id: "pos",
-      title: "نقطة بيع",
-      permissions: [
-        { id: "pos_view", label: "عرض المبيعات عبر نقطة البيع", checked: false },
-        { id: "pos_add", label: "إضافة عملية بيع عبر نقطة البيع", checked: false },
-        { id: "pos_edit", label: "تعديل عملية بيع عبر نقطة البيع", checked: false },
-        { id: "pos_delete", label: "حذف عملية بيع عبر نقطة البيع", checked: false },
-        { id: "pos_print_invoice", label: "طباعة الفاتورة", checked: false },
-      ],
-    },
-    {
-      id: "reports",
-      title: "التقارير",
-      permissions: [
-        { id: "reports_purchase_sales", label: "عرض تقرير المشتريات والمبيعات", checked: false },
-        { id: "reports_profit_loss", label: "عرض تقرير الأرباح والخسائر", checked: false },
-        { id: "reports_stock", label: "عرض تقرير المخزون", checked: false },
-      ],
-    },
-    {
-      id: "settings",
-      title: "الإعدادات",
-      permissions: [
-        { id: "settings_business", label: "الوصول إلى إعدادات النشاط التجاري", checked: false },
-        { id: "settings_invoice", label: "الوصول إلى إعدادات الفواتير", checked: false },
-      ],
-    },
-    {
-      id: "home",
-      title: "الصفحة الرئيسية",
-      permissions: [{ id: "home_view", label: "عرض بيانات الصفحة الرئيسية", checked: false }],
-    },
-  ])
-
-  // Load role data
   useEffect(() => {
-    const roleData = mockRoles[roleId]
-    if (roleData) {
-      setRoleName(roleData.name)
-      setPermissionSections((prev) =>
-        prev.map((section) => ({
-          ...section,
-          permissions: section.permissions.map((perm) => ({
-            ...perm,
-            checked: roleData.permissions.includes(perm.id),
-          })),
-        })),
-      )
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+      const [permsData, roleData] = await Promise.all([
+        RoleService.getAllPermissions(),
+        RoleService.getById(roleId), // Assumes this method exists or we use show logic
+      ]);
+
+      setPermissions(permsData);
+      setRoleName(roleData.name);
+
+      // Map permissions object array to string array of names
+      const rolePermNames = roleData.permissions.map((p: any) => p.name);
+      setSelectedPermissions(rolePermNames);
+    } catch (error) {
+      console.error("Failed to load data", error);
+      toast.error("فشل تحميل البيانات");
+    } finally {
+      setIsLoading(false);
     }
-    setLoading(false)
-  }, [roleId])
+  };
 
-  const handlePermissionChange = (sectionId: string, permissionId: string, checked: boolean) => {
-    setPermissionSections((prev) =>
-      prev.map((section) =>
-        section.id === sectionId
-          ? {
-              ...section,
-              permissions: section.permissions.map((perm) => (perm.id === permissionId ? { ...perm, checked } : perm)),
-            }
-          : section,
-      ),
-    )
-  }
+  // Utility to group permissions by module
+  const groupedPermissions = permissions.reduce((acc, permission) => {
+    const parts = permission.name.split(" ");
+    const module = parts[1] || "general";
+    if (!acc[module]) acc[module] = [];
+    acc[module].push(permission);
+    return acc;
+  }, {} as Record<string, any[]>);
 
-  const handleSelectAll = (sectionId: string) => {
-    setPermissionSections((prev) =>
-      prev.map((section) =>
-        section.id === sectionId
-          ? {
-              ...section,
-              permissions: section.permissions.map((perm) => ({ ...perm, checked: true })),
-            }
-          : section,
-      ),
-    )
-  }
+  const handleCheckboxChange = (permissionId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedPermissions([...selectedPermissions, permissionId]);
+    } else {
+      setSelectedPermissions(
+        selectedPermissions.filter((id) => id !== permissionId)
+      );
+    }
+  };
 
-  const handleSave = () => {
-    const selectedPermissions = permissionSections.flatMap((section) =>
-      section.permissions.filter((perm) => perm.checked).map((perm) => perm.id),
-    )
-    console.log("Updated role:", { id: roleId, name: roleName, permissions: selectedPermissions })
-    router.push("/user-management/roles")
-  }
+  const handleSelectAllModule = (module: string, allPerms: any[]) => {
+    const allIds = allPerms.map((p) => p.name);
+    const allChecked = allIds.every((id) => selectedPermissions.includes(id));
 
-  if (loading) {
+    if (allChecked) {
+      setSelectedPermissions(
+        selectedPermissions.filter((id) => !allIds.includes(id))
+      );
+    } else {
+      const newIds = allIds.filter((id) => !selectedPermissions.includes(id));
+      setSelectedPermissions([...selectedPermissions, ...newIds]);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!roleName) {
+      toast.error("يرجى إدخال اسم الصلاحية");
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      await RoleService.update(roleId, {
+        name: roleName,
+        permissions: selectedPermissions,
+      });
+      toast.success("تم تحديث الصلاحية بنجاح");
+      router.push("/user-management/roles");
+    } catch (error) {
+      console.error(error);
+      toast.error("فشل حفظ التغييرات");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const moduleLabels: Record<string, string> = {
+    users: "المستخدمين",
+    products: "المنتجات",
+    sales: "المبيعات",
+    purchases: "المشتريات",
+    suppliers: "الموردين",
+    customers: "العملاء",
+    reports: "التقارير",
+    settings: "الإعدادات",
+  };
+
+  const actionLabels: Record<string, string> = {
+    view: "عرض",
+    create: "إضافة",
+    edit: "تعديل",
+    delete: "حذف",
+    export: "تصدير",
+  };
+
+  const getLabel = (permName: string) => {
+    const parts = permName.split(" ");
+    const action = parts[0];
+    const module = parts[1];
+    return `${actionLabels[action] || action} ${
+      moduleLabels[module] || module
+    }`;
+  };
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
-        <div className="text-gray-500">جاري التحميل...</div>
+      <div
+        className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500"
+        dir="rtl"
+      >
+        جاري التحميل...
       </div>
-    )
+    );
   }
 
   return (
@@ -278,7 +150,6 @@ export default function EditRolePage() {
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
             <span>الرئيسية</span>
             <span>/</span>
@@ -289,27 +160,29 @@ export default function EditRolePage() {
             <span className="text-blue-600">تعديل صلاحية</span>
           </div>
 
-          {/* Page Title */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <Shield className="w-6 h-6 text-blue-600" />
-              <h1 className="text-xl font-semibold text-gray-800">تعديل صلاحية: {roleName}</h1>
+              <h1 className="text-xl font-semibold text-gray-800">
+                تعديل صلاحية: {roleName}
+              </h1>
             </div>
-            <Button variant="outline" onClick={() => router.push("/user-management/roles")} className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => router.push("/user-management/roles")}
+              className="gap-2"
+            >
               <ArrowRight className="w-4 h-4" />
               رجوع للصلاحيات
             </Button>
           </div>
 
-          {/* Content Card */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            {/* Role Name */}
-            <div className="mb-6">
-              <Label htmlFor="roleName" className="text-sm font-medium text-gray-700 mb-2 block">
+            <div className="mb-8">
+              <Label className="text-base font-semibold text-gray-700 mb-2 block">
                 اسم الصلاحية <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="roleName"
                 value={roleName}
                 onChange={(e) => setRoleName(e.target.value)}
                 placeholder="أدخل اسم الصلاحية"
@@ -317,54 +190,90 @@ export default function EditRolePage() {
               />
             </div>
 
-            {/* Permissions */}
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">الصلاحيات</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {permissionSections.map((section) => (
-                  <div key={section.id} className="border rounded-lg p-4 bg-gray-50">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-medium text-gray-800">{section.title}</h3>
+              <h2 className="text-lg font-semibold text-gray-800 border-b pb-3">
+                الأذونات
+              </h2>
+            </div>
+
+            <div className="space-y-6">
+              {Object.entries(groupedPermissions).map(
+                ([module, modulePerms]) => (
+                  <div
+                    key={module}
+                    className="border rounded-lg overflow-hidden"
+                  >
+                    <div className="bg-gray-100 px-4 py-3 flex items-center justify-between">
+                      <h3 className="font-semibold text-gray-700">
+                        {moduleLabels[module] || module}
+                      </h3>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        onClick={() => handleSelectAll(section.id)}
-                        className="text-xs text-blue-600 hover:text-blue-700"
+                        onClick={() =>
+                          handleSelectAllModule(module, modulePerms)
+                        }
+                        className="text-xs"
                       >
-                        تحديد الكل
+                        {modulePerms.every((p) =>
+                          selectedPermissions.includes(p.name)
+                        )
+                          ? "إلغاء تحديد الكل"
+                          : "تحديد الكل"}
                       </Button>
                     </div>
-                    <div className="space-y-2">
-                      {section.permissions.map((permission) => (
-                        <div key={permission.id} className="flex items-center gap-2">
+
+                    <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {modulePerms.map((permission) => (
+                        <div
+                          key={permission.id}
+                          className="flex items-center gap-2"
+                        >
                           <Checkbox
-                            id={permission.id}
-                            checked={permission.checked}
+                            id={`perm_${permission.id}`}
+                            checked={selectedPermissions.includes(
+                              permission.name
+                            )}
                             onCheckedChange={(checked) =>
-                              handlePermissionChange(section.id, permission.id, checked as boolean)
+                              handleCheckboxChange(
+                                permission.name,
+                                checked as boolean
+                              )
                             }
                           />
-                          <Label htmlFor={permission.id} className="text-sm text-gray-600 cursor-pointer">
-                            {permission.label}
+                          <Label
+                            htmlFor={`perm_${permission.id}`}
+                            className="text-sm text-gray-600 cursor-pointer"
+                          >
+                            {getLabel(permission.name)}
                           </Label>
                         </div>
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                )
+              )}
             </div>
 
-            {/* Save Button */}
-            <div className="flex justify-end">
-              <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 gap-2">
-                <Save className="w-4 h-4" />
-                حفظ التغييرات
+            <div className="mt-8 flex justify-end">
+              <Button
+                onClick={handleSave}
+                className="bg-blue-600 hover:bg-blue-700 gap-2 px-8"
+                disabled={!roleName || isSaving}
+              >
+                {isSaving ? (
+                  "جاري الحفظ..."
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    حفظ التغييرات
+                  </>
+                )}
               </Button>
             </div>
           </div>
         </main>
       </div>
     </div>
-  )
+  );
 }

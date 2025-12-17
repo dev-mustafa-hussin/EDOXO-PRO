@@ -6,6 +6,12 @@ export interface Permission {
   created_at: string;
 }
 
+export interface Permission {
+  id: number;
+  name: string;
+  created_at: string;
+}
+
 export interface Role {
   id: number;
   name: string;
@@ -26,6 +32,11 @@ export const RoleService = {
 
   create: async (data: { name: string; permissions: string[] }) => {
     const response = await axios.post("/roles", data);
+    return response.data;
+  },
+
+  getById: async (id: number) => {
+    const response = await axios.get(`/roles/${id}`);
     return response.data;
   },
 
