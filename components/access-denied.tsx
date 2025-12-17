@@ -5,6 +5,7 @@ import { ShieldAlert, Lock, ArrowRight, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { PermissionRequestService } from "@/services/permission-request-service";
 
 export default function AccessDeniedPage() {
   const router = useRouter();
@@ -13,14 +14,13 @@ export default function AccessDeniedPage() {
   const handleRequestAccess = async () => {
     try {
       setIsRequesting(true);
-      // TODO: Call API to request access
-      // await axios.post('/api/request-access', { url: window.location.href })
-
-      // Simulate delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+      await PermissionRequestService.requestAccess({
+        url: window.location.href,
+        reason: "User requested access via Access Denied page",
+      });
       toast.success("تم إرسال طلب الصلاحية إلى المدير بنجاح");
     } catch (error) {
+      console.error(error);
       toast.error("حدث خطأ أثناء إرسال الطلب");
     } finally {
       setIsRequesting(false);
