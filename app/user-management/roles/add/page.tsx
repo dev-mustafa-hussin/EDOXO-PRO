@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { PermissionGuard } from "@/components/permission-guard";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -123,13 +124,6 @@ export default function AddRolePage() {
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-6">
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <span>الرئيسية</span>
-            <span>/</span>
-            <span>إدارة المستخدمين</span>
-            <span>/</span>
-            <span>الصلاحيات</span>
-            <span>/</span>
             <span className="text-blue-600">إضافة صلاحية</span>
           </div>
 
@@ -245,6 +239,7 @@ export default function AddRolePage() {
               </Button>
             </div>
           </div>
+        </PermissionGuard>
         </main>
       </div>
     </div>

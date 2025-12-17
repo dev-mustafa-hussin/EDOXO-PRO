@@ -1,5 +1,18 @@
 import axios from "@/lib/axios";
 
+// Permission Constants (Optional)
+export const PERMISSIONS = {
+  VIEW_USERS: "view users",
+  CREATE_USERS: "create users",
+  EDIT_USERS: "edit users",
+  DELETE_USERS: "delete users",
+
+  VIEW_ROLES: "view roles",
+  CREATE_ROLES: "create roles",
+  EDIT_ROLES: "edit roles",
+  DELETE_ROLES: "delete roles",
+};
+
 export interface Permission {
   id: number;
   name: string;

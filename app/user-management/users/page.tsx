@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { PermissionGuard } from "@/components/permission-guard";
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
@@ -171,209 +172,214 @@ export default function UsersPage() {
       <div className="flex">
         <Sidebar collapsed={sidebarCollapsed} />
         <main className="flex-1 p-8">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div>
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                <span>الرئيسية</span>
-                <span className="text-gray-300">/</span>
-                <span>إدارة المستخدمين</span>
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                <Users className="w-7 h-7 text-indigo-600" />
-                المستخدمين
-              </h1>
-              <p className="text-gray-500 text-sm mt-1">
-                إدارة حسابات المستخدمين وصلاحياتهم
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="relative group">
-                <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
-                <Input
-                  placeholder="بحث عن مستخدم..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pr-9 w-64 bg-white border-gray-200 focus:border-indigo-500 focus:ring-indigo-100 transition-all font-normal text-sm shadow-sm"
-                />
+          <PermissionGuard permission="view users" showAccessDenied>
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <div>
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                  <span>الرئيسية</span>
+                  <span className="text-gray-300">/</span>
+                  <span>إدارة المستخدمين</span>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                  <Users className="w-7 h-7 text-indigo-600" />
+                  المستخدمين
+                </h1>
+                <p className="text-gray-500 text-sm mt-1">
+                  إدارة حسابات المستخدمين وصلاحياتهم
+                </p>
               </div>
 
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 transition-all active:scale-95">
-                    <Plus className="w-4 h-4 ml-2" />
-                    مستخدم جديد
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  className="sm:max-w-[500px] p-0 overflow-hidden bg-white border-none shadow-2xl"
-                  dir="rtl"
+              <div className="flex items-center gap-3">
+                <div className="relative group">
+                  <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
+                  <Input
+                    placeholder="بحث عن مستخدم..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pr-9 w-64 bg-white border-gray-200 focus:border-indigo-500 focus:ring-indigo-100 transition-all font-normal text-sm shadow-sm"
+                  />
+                </div>
+
+                <Dialog
+                  open={isAddDialogOpen}
+                  onOpenChange={setIsAddDialogOpen}
                 >
-                  <div className="bg-gradient-to-l from-indigo-500 to-indigo-600 p-6 text-white">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl flex items-center gap-2 text-white">
-                        <Plus className="w-5 h-5" />
-                        إضافة مستخدم جديد
-                      </DialogTitle>
-                      <p className="text-indigo-100 text-sm opacity-90">
-                        املأ البيانات التالية لإنشاء حساب جديد
-                      </p>
-                    </DialogHeader>
-                  </div>
-                  <div className="p-6">
-                    <UserForm
-                      onSubmit={handleAddUser}
-                      isSubmitting={isSubmitting}
-                    />
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                      <Plus className="w-4 h-4 ml-2" />
+                      مستخدم جديد
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    className="sm:max-w-[500px] p-0 overflow-hidden bg-white border-none shadow-2xl"
+                    dir="rtl"
+                  >
+                    <div className="bg-gradient-to-l from-indigo-500 to-indigo-600 p-6 text-white">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl flex items-center gap-2 text-white">
+                          <Plus className="w-5 h-5" />
+                          إضافة مستخدم جديد
+                        </DialogTitle>
+                        <p className="text-indigo-100 text-sm opacity-90">
+                          املأ البيانات التالية لإنشاء حساب جديد
+                        </p>
+                      </DialogHeader>
+                    </div>
+                    <div className="p-6">
+                      <UserForm
+                        onSubmit={handleAddUser}
+                        isSubmitting={isSubmitting}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
-          </div>
 
-          {/* Table Card */}
-          <div className="bg-white rounded-xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-right">
-                <thead className="bg-gray-50/80 border-b border-gray-100 text-gray-600">
-                  <tr>
-                    <th className="p-4 font-semibold w-16 text-center">#</th>
-                    <th className="p-4 font-semibold">المستخدم</th>
-                    <th className="p-4 font-semibold">البريد الإلكتروني</th>
-                    <th className="p-4 font-semibold">الصلاحية</th>
-
-                    <th className="p-4 font-semibold text-left pl-6">
-                      الإجراءات
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {isLoading ? (
+            {/* Table Card */}
+            <div className="bg-white rounded-xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-right">
+                  <thead className="bg-gray-50/80 border-b border-gray-100 text-gray-600">
                     <tr>
-                      <td colSpan={5} className="p-8 text-center">
-                        <div className="flex flex-col items-center justify-center gap-2 text-gray-400">
-                          <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-                          <span>جاري تحميل البيانات...</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : filteredUsers.length > 0 ? (
-                    filteredUsers.map((user) => (
-                      <tr
-                        key={user.id}
-                        className="hover:bg-indigo-50/30 transition-colors group"
-                      >
-                        <td className="p-4 text-center font-mono text-gray-400">
-                          #{user.id}
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
-                              {user.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                              <div className="font-semibold text-gray-800">
-                                {user.name}
-                              </div>
-                              <div className="text-xs text-gray-400 hidden sm:block md:hidden">
-                                {user.email}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4 text-gray-600 font-medium font-mono text-xs md:text-sm">
-                          {user.email}
-                        </td>
-                        <td className="p-4">
-                          <RoleBadge role={user.role || "user"} />
-                        </td>
+                      <th className="p-4 font-semibold w-16 text-center">#</th>
+                      <th className="p-4 font-semibold">المستخدم</th>
+                      <th className="p-4 font-semibold">البريد الإلكتروني</th>
+                      <th className="p-4 font-semibold">الصلاحية</th>
 
-                        <td className="p-4">
-                          <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-full"
-                              onClick={() => openEditDialog(user)}
-                              title="تعديل"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-full"
-                              title="تغيير كلمة المرور"
-                            >
-                              <Key className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full"
-                              onClick={() => handleDeleteUser(user.id)}
-                              title="حذف"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                      <th className="p-4 font-semibold text-left pl-6">
+                        الإجراءات
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {isLoading ? (
+                      <tr>
+                        <td colSpan={5} className="p-8 text-center">
+                          <div className="flex flex-col items-center justify-center gap-2 text-gray-400">
+                            <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                            <span>جاري تحميل البيانات...</span>
                           </div>
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="p-12 text-center text-gray-400"
-                      >
-                        <div className="flex flex-col items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                            <Search className="w-6 h-6 text-gray-300" />
+                    ) : filteredUsers.length > 0 ? (
+                      filteredUsers.map((user) => (
+                        <tr
+                          key={user.id}
+                          className="hover:bg-indigo-50/30 transition-colors group"
+                        >
+                          <td className="p-4 text-center font-mono text-gray-400">
+                            #{user.id}
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                                {user.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="font-semibold text-gray-800">
+                                  {user.name}
+                                </div>
+                                <div className="text-xs text-gray-400 hidden sm:block md:hidden">
+                                  {user.email}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4 text-gray-600 font-medium font-mono text-xs md:text-sm">
+                            {user.email}
+                          </td>
+                          <td className="p-4">
+                            <RoleBadge role={user.role || "user"} />
+                          </td>
+
+                          <td className="p-4">
+                            <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-full"
+                                onClick={() => openEditDialog(user)}
+                                title="تعديل"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-full"
+                                title="تغيير كلمة المرور"
+                              >
+                                <Key className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full"
+                                onClick={() => handleDeleteUser(user.id)}
+                                title="حذف"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="p-12 text-center text-gray-400"
+                        >
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                              <Search className="w-6 h-6 text-gray-300" />
+                            </div>
+                            <p>لا توجد نتائج مطابقة للبحث</p>
                           </div>
-                          <p>لا توجد نتائج مطابقة للبحث</p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
 
-          {/* Footer Info */}
-          <div className="mt-4 flex items-center justify-between text-xs text-gray-400 px-2">
-            <span>إجمالي السجلات: {filteredUsers.length}</span>
-            <span>آخر تحديث: {new Date().toLocaleTimeString("ar-EG")}</span>
-          </div>
+            {/* Footer Info */}
+            <div className="mt-4 flex items-center justify-between text-xs text-gray-400 px-2">
+              <span>إجمالي السجلات: {filteredUsers.length}</span>
+              <span>آخر تحديث: {new Date().toLocaleTimeString("ar-EG")}</span>
+            </div>
 
-          {/* Edit Dialog */}
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent
-              className="sm:max-w-[500px] p-0 overflow-hidden bg-white border-none shadow-2xl"
-              dir="rtl"
-            >
-              <div className="bg-gradient-to-l from-indigo-600 to-violet-600 p-6 text-white">
-                <DialogHeader>
-                  <DialogTitle className="text-xl flex items-center gap-2 text-white">
-                    <Edit className="w-5 h-5" />
-                    تعديل بيانات المستخدم
-                  </DialogTitle>
-                  <p className="text-indigo-100 text-sm opacity-90">
-                    تحديث المعلومات الشخصية والصلاحيات
-                  </p>
-                </DialogHeader>
-              </div>
-              <div className="p-6">
-                <UserForm
-                  initialData={editingUser}
-                  onSubmit={handleUpdateUser}
-                  isSubmitting={isSubmitting}
-                  isEdit
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+            {/* Edit Dialog */}
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+              <DialogContent
+                className="sm:max-w-[500px] p-0 overflow-hidden bg-white border-none shadow-2xl"
+                dir="rtl"
+              >
+                <div className="bg-gradient-to-l from-indigo-600 to-violet-600 p-6 text-white">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl flex items-center gap-2 text-white">
+                      <Edit className="w-5 h-5" />
+                      تعديل بيانات المستخدم
+                    </DialogTitle>
+                    <p className="text-indigo-100 text-sm opacity-90">
+                      تحديث المعلومات الشخصية والصلاحيات
+                    </p>
+                  </DialogHeader>
+                </div>
+                <div className="p-6">
+                  <UserForm
+                    initialData={editingUser}
+                    onSubmit={handleUpdateUser}
+                    isSubmitting={isSubmitting}
+                    isEdit
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
+          </PermissionGuard>
         </main>
       </div>
     </div>
